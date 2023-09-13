@@ -4,12 +4,57 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Memory Card Game | CodingNepal</title>
+    <title>MemoRunes</title>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
+    <div class="game-settings">
+        <div class="mode-section">
+            <h2 style="width: 100%; text-align: center;">Game Mode</h2>
+            <div class="mode-choice selected">
+                <img src="images/vs_icon.svg" />
+                <h3>VS</h3>
+            </div>
+            <div class="mode-choice">
+                <img src="images/countdown_icon.svg" />
+                <h3>Countdown</h3>
+            </div>
+            <div class="mode-choice">
+                <img src="images/free_icon.svg" />
+                <h3>Free Play</h3>
+            </div>
+        </div>
+        <div class="mode-options">
+            <h2 style="width: 100%; text-align: center;">Mode Options</h2>
+        </div>
+        <div class="game-options">
+            <h2 style="width: 100%; text-align: center;">Game Options</h2>
+            <h3 style="width: 100%;">Board Size</h2>
+                <div class="board-size-container">
+                    <div class="board-size-option" onclick="changeBoardSize(2, 'two')" id="two">
+                        2
+                    </div>
+                    <div class="board-size-option selected" onclick="changeBoardSize(4, 'four')" id="four">
+                        4
+                    </div>
+                    <div class="board-size-option" onclick="changeBoardSize(6, 'six')" id="six">
+                        6
+                    </div>
+                    <div class="board-size-option" onclick="changeBoardSize(8, 'eight')" id="eight">
+                        8
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="game-board">
+        <div class="wrapper">
+            <ul class="cards" id="cards">
+                <!-- Rendered in JS now, building up to allow user control over the board -->
+            </ul>
+        </div>
+    </div>
 
     <div class="counter">
         <span id="count">08:00</span>

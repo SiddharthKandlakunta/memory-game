@@ -101,21 +101,21 @@ body {
 }
 
 .cards {
-    height: 600px;
-    width: 600px;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .cards .card {
+    margin: 5px;
+}
+
+.cards .card:not(.label) {
     cursor: pointer;
     list-style: none;
     user-select: none;
     position: relative;
     perspective: 1000px;
     transform-style: preserve-3d;
-    height: calc(100% / 6 - 10px);
-    width: calc(100% / 6 - 10px);
 }
 
 .card.shake {
@@ -168,11 +168,11 @@ body {
 }
 
 .card .front-view img {
-    width: 32px;
+    width: 75%;
 }
 
 .card .back-view img {
-    max-width: 45px;
+    max-width: 75%;
 }
 
 .card .back-view {
@@ -185,32 +185,6 @@ body {
 
 .card.flip .front-view {
     transform: rotateY(180deg);
-}
-
-@media screen and (max-width: 700px) {
-    .cards {
-        height: 350px;
-        width: 350px;
-    }
-    .card .front-view img {
-        width: 17px;
-    }
-    .card .back-view img {
-        max-width: 40px;
-    }
-}
-
-@media screen and (max-width: 530px) {
-    .cards {
-        height: 300px;
-        width: 300px;
-    }
-    .card .front-view img {
-        width: 15px;
-    }
-    .card .back-view img {
-        max-width: 35px;
-    }
 }
 
 .scores {
@@ -274,4 +248,97 @@ body {
     padding: 10px;
     border-radius: 5px;
     margin: 0 10px;
+}
+
+.mode-section {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mode-section .mode-choice {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    width: 150px;
+    height: 150px;
+    margin: 5px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.mode-section .mode-choice img {
+    height: 75px;
+    width: 75px;
+}
+
+.mode-section .mode-choice:hover {
+    cursor: pointer;
+    background-color: #00000010;
+}
+
+.mode-section .mode-choice.selected {
+    border: 2px solid black
+}
+
+.game-options {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.game-options .board-size-container {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.game-options .board-size-container .board-size-option {
+    display: flex;
+    flex-flow: row wrap;
+    width: calc(100% / 4 - 10px);
+    min-width: 75px;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    margin: 5px;
+}
+
+.game-options .board-size-container .board-size-option:hover {
+    cursor: pointer;
+    background-color: #00000010;
+}
+
+.game-options .board-size-container .board-size-option.selected {
+    border: 2px solid black
+}
+
+.mode-options {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
 }

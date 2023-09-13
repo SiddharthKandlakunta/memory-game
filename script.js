@@ -1,4 +1,10 @@
+const NUM_CARD_IMAGES = 25;
+const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+let sideLength = 4;
+let pairs = (sideLength * sideLength) / 2;
 let matched = 0;
+
 let cardOne, cardTwo;
 let disableDeck = false;
 
@@ -12,12 +18,11 @@ let button2Clicked = false;
 const countElement = document.getElementById("count");
 const startButton = document.getElementById("startButton");
 const resetButton = document.getElementById("resetButton");
-let totalTime = 1 * 10; // 8 minutes in seconds
+let totalTime = 8 * 60; // 8 minutes in seconds
 let remainingTime = totalTime;
 let timerInterval;
 
-let player1Name = "Player 1"; // Default name for player 1
-let player2Name = "Player 2"; // Default name for player 2
+let players = ["Player 1", "Player 2"];
 
 function updateCounter() {
     if (remainingTime <= 0) {
@@ -85,19 +90,16 @@ function flipCard({ target: clickedCard }) {
 function matchCards(img1, img2) {
     if (img1 === img2) {
         matched++;
-        if (matched == 18) {
-            const cards = document.querySelectorAll(".card");
+        if (matched == pairs) {
+            const cards = document.querySelectorAll(".card:not(.label)");
             cards.forEach((card) => {
                 setTimeout(() => {
                     card.classList.add("jump");
                 }, 400);
-                setTimeout(() => {
-                    card.classList.remove("jump");
-                }, 1200);
             });
             setTimeout(() => {
                 return shuffleCard();
-            }, 2000);
+            }, 1200);
         }
         cardOne.removeEventListener("click", flipCard);
         cardTwo.removeEventListener("click", flipCard);
@@ -131,34 +133,78 @@ function shuffleCard() {
     matched = 0;
     disableDeck = false;
     cardOne = cardTwo = "";
-    document.getElementById("cards").innerHTML = "";
+    let cards = document.getElementById("cards");
+    cards.innerHTML = "";
+    cards.style.width = `calc(100px * ${sideLength + 1})`;
+    cards.style.height = `calc(100px * ${sideLength + 1})`;
     let arr = [];
-    for (let i = 1; i <= (6 * 6) / 2; i++) {
-        arr.push(i);
-        arr.push(i);
+    let arr2 = [];
+    for (let i = 0; i < (sideLength * sideLength) / 2; i++) {
+        arr.push((i % 25) + 1);
+        arr2.push((i % 25) + 1);
     }
-    arr.sort(() => (Math.random() > 0.5 ? 1 : -1));
-    arr.forEach((value) => {
-        const card = document.createElement("li");
-        card.classList.add("card");
-        card.innerHTML += `
+    const runes = arr.concat(arr2);
+    runes.sort(() => (Math.random() > 0.5 ? 1 : -1));
+    for (let row = 0; row < sideLength + 1; row++) {
+        for (let col = 0; col < sideLength + 1; col++) {
+            if (col == 0 && row == 0) {
+                const card = document.createElement("li");
+                card.classList.add("card", "label");
+                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                document.getElementById("cards").appendChild(card);
+            } else if (col == 0) {
+                const card = document.createElement("li");
+                card.classList.add("card", "label");
+                card.innerHTML = `<h2>${ROW_LABELS[row - 1]}<h2>`;
+                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                document.getElementById("cards").appendChild(card);
+            } else if (row == 0) {
+                const card = document.createElement("li");
+                card.classList.add("card", "label");
+                card.innerHTML = `<h2>${col}<h2>`;
+                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                document.getElementById("cards").appendChild(card);
+            } else {
+                const card = document.createElement("li");
+                card.classList.add("card");
+                card.innerHTML += `
             <div class="view front-view">
                 <img src="images/back_icon.svg" alt="icon">
             </div>
             <div class="view back-view">
-                <img src="images/Rune-${value}.svg" alt="Rune ${value}">
+                <img src="images/Rune-${
+                    runes[(row - 1) * sideLength + (col - 1)]
+                }.svg" alt="Rune ${runes[(row - 1) * sideLength + (col - 1)]}">
             </div>
         `;
-        card.addEventListener("click", flipCard);
-        document.getElementById("cards").appendChild(card);
-    });
+                card.addEventListener("click", flipCard);
+                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                document.getElementById("cards").appendChild(card);
+            }
+        }
+    }
 }
 
-shuffleCard();
+function changeBoardSize(size, id) {
+    const selected = document.querySelector(
+        ".game-options .board-size-container .board-size-option.selected"
+    );
+    selected.classList.remove("selected");
+    const newSelected = document.querySelector(
+        ".game-options .board-size-container .board-size-option#" + id
+    );
+    newSelected.classList.add("selected");
+    sideLength = size;
+    shuffleCard();
+}
 
-cards.forEach((card) => {
-    card.addEventListener("click", flipCard);
-});
+function startGame() {}
+
+shuffleCard();
 
 button1.addEventListener("click", () => {
     if (!button1Clicked) {
