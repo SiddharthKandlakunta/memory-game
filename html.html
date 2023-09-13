@@ -13,21 +13,21 @@
     <div class="game-settings">
         <div class="mode-section">
             <h2 style="width: 100%; text-align: center;">Game Mode</h2>
-            <div class="mode-choice">
-                <img src="images/vs_icon.svg" />
-                <h3>VS</h3>
-            </div>
-            <div class="mode-choice">
-                <img src="images/countdown_icon.svg" />
-                <h3>Countdown</h3>
-            </div>
-            <div class="mode-choice selected">
+            <div class="mode-choice selected" onclick="changeMode('freeplay')" id="freeplay">
                 <img src="images/free_icon.svg" />
                 <h3>Free Play</h3>
             </div>
+            <div class="mode-choice" onclick="changeMode('vs')" id="vs">
+                <img src="images/vs_icon.svg" />
+                <h3>VS</h3>
+            </div>
+            <div class="mode-choice" onclick="changeMode('countdown')" id="countdown">
+                <img src="images/countdown_icon.svg" />
+                <h3>Countdown</h3>
+            </div>
         </div>
-        <div class="mode-options">
-            <h2 style="width: 100%; text-align: center;">Mode Options</h2>
+        <div class="mode-options" id="mode-options">
+
         </div>
         <div class="game-options">
             <h2 style="width: 100%; text-align: center;">Game Options</h2>

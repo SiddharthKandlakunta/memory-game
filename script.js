@@ -22,7 +22,69 @@ let totalTime = 8 * 60; // 8 minutes in seconds
 let remainingTime = totalTime;
 let timerInterval;
 
+let gameMode = "freeplay";
+
+function getModeSettings() {
+    const modeOptions = document.getElementById("mode-options");
+    modeOptions.innerHTML =
+        '<h2 style="width: 100%; text-align: center;">Mode Options</h2>';
+    switch (gameMode) {
+        case "vs":
+            modeOptions.innerHTML += vsOptions();
+            break;
+        case "countdown":
+            break;
+        case "freeplay":
+        default:
+    }
+}
+
+function changeMode(mode) {
+    const selected = document.querySelector(
+        ".mode-section .mode-choice.selected"
+    );
+    selected.classList.remove("selected");
+    const newSelected = document.querySelector(
+        ".mode-section .mode-choice#" + mode
+    );
+    newSelected.classList.add("selected");
+    gameMode = mode;
+    getModeSettings();
+}
+
 let players = ["Player 1", "Player 2"];
+
+function addPlayer() {
+    players.push(`Player ${players.length + 1}`);
+    getModeSettings();
+}
+
+function removePlayer() {
+    players.pop();
+    getModeSettings();
+}
+
+function editPlayer(e, index) {
+    players[index] = e.target.value;
+}
+
+function vsOptions() {
+    let options = '<h3 style="width: 100%;">Players</h3>';
+    options += '<div class="player-list">';
+    players.forEach((player, index) => {
+        options += `<input class="player-name" type="text" id="Player-${index}" name="player-${index}" value="${player}" onchange="editPlayer(event, ${index})"/>`;
+    });
+    options +=
+        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>' +
+        '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
+    options += "</div>";
+
+    return options;
+}
+
+function logPlayers() {
+    console.log(players);
+}
 
 function updateCounter() {
     if (remainingTime <= 0) {
@@ -203,7 +265,17 @@ function changeBoardSize(size, id) {
     shuffleCard();
 }
 
+function startGame() {
+    shuffleCard();
+    //hide options, show board, and start the game
+}
+
+function endGame() {
+    //hide board, show options
+}
+
 shuffleCard();
+getModeSettings();
 
 button1.addEventListener("click", () => {
     if (!button1Clicked) {
