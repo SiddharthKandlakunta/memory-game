@@ -199,10 +199,9 @@ function changeBoardSize(size, id) {
     );
     newSelected.classList.add("selected");
     sideLength = size;
+    pairs = (sideLength * sideLength) / 2;
     shuffleCard();
 }
-
-function startGame() {}
 
 shuffleCard();
 
