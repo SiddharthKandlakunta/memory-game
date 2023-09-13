@@ -1,10 +1,11 @@
 /* Import Google Font - Poppins */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
@@ -12,17 +13,21 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #05BDBA;
     margin: 0;
     padding: 20px;
     flex-direction: column;
+    background-image: url('images/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center the content vertically */
-    justify-content: center; /* Center the content horizontally */
+    align-items: center;
+    /* Center the content vertically */
+    justify-content: center;
+    /* Center the content horizontally */
     padding: 25px;
     border-radius: 10px;
     background: #F8F8F8;
@@ -50,8 +55,10 @@ body {
     border-radius: 5px;
     text-align: center;
     position: fixed;
-    top: 20px; /* Adjust the top position to move it to the top-right corner */
-    right: 20px; /* Set right position to align with the top-right corner */
+    top: 20px;
+    /* Adjust the top position to move it to the top-right corner */
+    right: 20px;
+    /* Set right position to align with the top-right corner */
 }
 
 #startButton {
@@ -77,105 +84,133 @@ body {
     border-radius: 5px;
     cursor: pointer;
     margin-left: 20px;
-    width: auto; /* Set width to auto to match the width of the Start button */
+    width: auto;
+    /* Set width to auto to match the width of the Start button */
 }
 
 #resetButton:hover {
     background-color: #d32f2f;
 }
 
-.cards, .card, .view{
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.cards,
+.card,
+.view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.cards{
-  height: 400px;
-  width: 400px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+
+.cards {
+    height: 600px;
+    width: 600px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
-.cards .card{
-  cursor: pointer;
-  list-style: none;
-  user-select: none;
-  position: relative;
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  height: calc(100% / 4 - 10px);
-  width: calc(100% / 4 - 10px);
+
+.cards .card {
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    position: relative;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    height: calc(100% / 6 - 10px);
+    width: calc(100% / 6 - 10px);
 }
-.card.shake{
-  animation: shake 0.35s ease-in-out;
+
+.card.shake {
+    animation: shake 0.35s ease-in-out;
 }
+
+.card.jump {
+    animation: jump 0.35s ease-in-out;
+}
+
 @keyframes shake {
-  0%, 100%{
-    transform: translateX(0);
-  }
-  20%{
-    transform: translateX(-13px);
-  }
-  40%{
-    transform: translateX(13px);
-  }
-  60%{
-    transform: translateX(-8px);
-  }
-  80%{
-    transform: translateX(8px);
-  }
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-13px);
+    }
+    40% {
+        transform: translateX(13px);
+    }
+    60% {
+        transform: translateX(-8px);
+    }
+    80% {
+        transform: translateX(8px);
+    }
 }
-.card .view{
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  border-radius: 7px;
-  background: #fff;
-  pointer-events: none;
-  backface-visibility: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  transition: transform 0.25s linear;
+
+@keyframes jump {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-13px);
+    }
 }
-.card .front-view img{
-  width: 19px;
+
+.card .view {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 7px;
+    background: #fff;
+    pointer-events: none;
+    backface-visibility: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s linear;
 }
-.card .back-view img{
-  max-width: 45px;
+
+.card .front-view img {
+    width: 32px;
 }
-.card .back-view{
-  transform: rotateY(-180deg);
+
+.card .back-view img {
+    max-width: 45px;
 }
-.card.flip .back-view{
-  transform: rotateY(0);
+
+.card .back-view {
+    transform: rotateY(-180deg);
 }
-.card.flip .front-view{
-  transform: rotateY(180deg);
+
+.card.flip .back-view {
+    transform: rotateY(0);
+}
+
+.card.flip .front-view {
+    transform: rotateY(180deg);
 }
 
 @media screen and (max-width: 700px) {
-  .cards{
-    height: 350px;
-    width: 350px;
-  }
-  .card .front-view img{
-    width: 17px;
-  }
-  .card .back-view img{
-    max-width: 40px;
-  }
+    .cards {
+        height: 350px;
+        width: 350px;
+    }
+    .card .front-view img {
+        width: 17px;
+    }
+    .card .back-view img {
+        max-width: 40px;
+    }
 }
 
 @media screen and (max-width: 530px) {
-  .cards{
-    height: 300px;
-    width: 300px;
-  }
-  .card .front-view img{
-    width: 15px;
-  }
-  .card .back-view img{
-    max-width: 35px;
-  }
+    .cards {
+        height: 300px;
+        width: 300px;
+    }
+    .card .front-view img {
+        width: 15px;
+    }
+    .card .back-view img {
+        max-width: 35px;
+    }
 }
 
 .scores {
@@ -194,16 +229,19 @@ body {
 }
 
 .highlight {
-    background-color: #ff5733; /* Change this to your desired highlighted button color */
+    background-color: #ff5733;
+    /* Change this to your desired highlighted button color */
 }
 
 .scores {
     position: absolute;
     top: 20px;
-    right: 20px; /* Adjust right to align with the top-right corner */
+    right: 20px;
+    /* Adjust right to align with the top-right corner */
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Align scores to the right */
+    align-items: flex-end;
+    /* Align scores to the right */
     font-size: 16px;
     color: #333;
 }
@@ -223,7 +261,8 @@ body {
 
 .score-value_1 {
     font-size: 24px;
-    background-color: #ff5733;;
+    background-color: #ff5733;
+    ;
     padding: 10px;
     border-radius: 5px;
     margin: 0 10px;
@@ -236,4 +275,3 @@ body {
     border-radius: 5px;
     margin: 0 10px;
 }
-
