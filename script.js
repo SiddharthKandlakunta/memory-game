@@ -1,28 +1,209 @@
 const NUM_CARD_IMAGES = 25;
 const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
+const settings = document.getElementById("game-settings");
+const board = document.getElementById("game-board");
+
 let sideLength = 4;
 let pairs = (sideLength * sideLength) / 2;
+let totalMatched = 0;
 let matched = 0;
 
+const cardGrid = document.getElementById("cards");
 let cardOne, cardTwo;
 let disableDeck = false;
 
-const button1 = document.getElementById("button1");
-const button2 = document.getElementById("button2");
-let isButton1Highlighted = true;
-let clickCount = 0;
-let button1Clicked = false;
-let button2Clicked = false;
-
+const counter = document.getElementById("counter");
 const countElement = document.getElementById("count");
-const startButton = document.getElementById("startButton");
-const resetButton = document.getElementById("resetButton");
-let totalTime = 8 * 60; // 8 minutes in seconds
-let remainingTime = totalTime;
+let minutes = 0;
+let seconds = 0;
+let remainingTime = minutes * 60 + seconds;
 let timerInterval;
 
+function setCounter() {
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
+
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+}
+
+function countDown() {
+    if ((gameMode == "countdown" || gameMode == "vs") && remainingTime <= 0) {
+        clearInterval(timerInterval);
+        endGame();
+        return;
+    }
+
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
+
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    remainingTime--;
+}
+
+function countUp() {
+    remainingTime++;
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
+
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+}
+
+function editMinutes(min) {
+    minutes = min;
+    if (minutes < 1 && seconds < 1) {
+        seconds = 15;
+    }
+    if (minutes == 10) {
+        seconds = 0;
+    }
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
+    getModeSettings();
+}
+
+function editSeconds(sec) {
+    seconds = sec;
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
+    getModeSettings();
+}
+
+function startTimer() {
+    counter.style.display = "block";
+    clearInterval(timerInterval);
+    timerInterval = setInterval(
+        gameMode == "sprint" || gameMode == "freeplay" ? countUp : countDown,
+        1000
+    );
+}
+
+function resetTimer() {
+    counter.style.display = "none";
+    clearInterval(timerInterval);
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
+}
+
+function renderTimerManagement() {
+    let options = `
+        <h3 style="width: 100%;">Timer</h3>
+        <h5 style="width: 100%;">Minutes</h5>
+        <div class="time-options">
+        `;
+    for (let i = 0; i < 11; i++) {
+        options +=
+            i == minutes
+                ? `<div class="time-choice selected">${i}</div>`
+                : `<div class="time-choice" onclick="editMinutes(${i})">${i}</div>`;
+    }
+    options += `
+        </div>
+        <h5 style="width: 100%;">Seconds</h5>
+        <div class="time-options">
+        `;
+    if (minutes == 10) {
+        options += '<div class="time-choice selected">0</div>';
+    } else {
+        for (let i = 0; i <= 45; i += 15) {
+            if (minutes > 0 || i > 0) {
+                options +=
+                    i == seconds
+                        ? `<div class="time-choice selected">${i}</div>`
+                        : `<div class="time-choice" onclick="editSeconds(${i})">${i}</div>`;
+            }
+        }
+    }
+    options += "</div>";
+
+    return options;
+}
+
+const playerInfo = document.getElementById("player-info");
+let playerIndex = 0;
+let players = ["Player 1", "Player 2"];
+let playerScores = [0, 0];
+
+function nextPlayer() {
+    playerIndex = (playerIndex + 1) % players.length;
+    renderScoreCards();
+}
+
+function addPlayer() {
+    players.push(`Player ${players.length + 1}`);
+    playerScores.push(0);
+    getModeSettings();
+}
+
+function removePlayer() {
+    players.pop();
+    playerScores.pop();
+    getModeSettings();
+}
+
+function editPlayer(e, index) {
+    players[index] = e.target.value;
+}
+
+function renderPlayerManagement() {
+    //Player Options
+    let options = '<h3 style="width: 100%;">Players</h3>';
+    options += '<div class="player-list">';
+    players.forEach((player, index) => {
+        options += `<input class="player-name" type="text" id="Player-${index}" name="player-${index}" value="${player}" onchange="editPlayer(event, ${index})"/>`;
+    });
+    options +=
+        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>';
+    if (players.length > 2) {
+        options +=
+            '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
+    }
+    options += "</div>";
+
+    return options;
+}
+
+function renderScoreCards() {
+    const scoreContainer = document.getElementById("player-scores");
+    scoreContainer.innerHTML = "";
+    players.forEach((name, index) => {
+        const scoreCard = document.createElement("li");
+        scoreCard.innerHTML = `${name} | ${playerScores[index]}`;
+        scoreCard.classList.add("score-card");
+        if (index == playerIndex) {
+            scoreCard.classList.add("selected");
+        }
+        scoreContainer.appendChild(scoreCard);
+    });
+}
+
 let gameMode = "freeplay";
+
+function vsOptions() {
+    let options = renderPlayerManagement();
+    options += renderTimerManagement();
+    return options;
+}
+
+function countdownOptions() {
+    let options = renderTimerManagement();
+    return options;
+}
 
 function getModeSettings() {
     const modeOptions = document.getElementById("mode-options");
@@ -33,9 +214,13 @@ function getModeSettings() {
             modeOptions.innerHTML += vsOptions();
             break;
         case "countdown":
+            modeOptions.innerHTML += countdownOptions();
             break;
+        case "sprint":
         case "freeplay":
         default:
+            modeOptions.innerHTML +=
+                '<p style="width: 100%; text-align: center;">No options for this mode.</p>';
     }
 }
 
@@ -49,91 +234,20 @@ function changeMode(mode) {
     );
     newSelected.classList.add("selected");
     gameMode = mode;
-    getModeSettings();
-}
-
-let players = ["Player 1", "Player 2"];
-
-function addPlayer() {
-    players.push(`Player ${players.length + 1}`);
-    getModeSettings();
-}
-
-function removePlayer() {
-    players.pop();
-    getModeSettings();
-}
-
-function editPlayer(e, index) {
-    players[index] = e.target.value;
-}
-
-function vsOptions() {
-    let options = '<h3 style="width: 100%;">Players</h3>';
-    options += '<div class="player-list">';
-    players.forEach((player, index) => {
-        options += `<input class="player-name" type="text" id="Player-${index}" name="player-${index}" value="${player}" onchange="editPlayer(event, ${index})"/>`;
-    });
-    options +=
-        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>' +
-        '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
-    options += "</div>";
-
-    return options;
-}
-
-function logPlayers() {
-    console.log(players);
-}
-
-function updateCounter() {
-    if (remainingTime <= 0) {
-        clearInterval(timerInterval);
-        displayGameOverPopup();
-        return;
+    if (mode == "freeplay" || mode == "sprint") {
+        minutes = 0;
+        editSeconds(0);
+    } else if (remainingTime == 0) {
+        editSeconds(15);
     }
-
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
-    remainingTime--;
+    getModeSettings();
 }
 
 function displayGameOverPopup() {
     let winnerMessage = "Game Over!\n";
-    if (score1 > score2) {
-        winnerMessage += `Winner is ${player1Name} with a score of ${score1}`;
-    } else if (score1 < score2) {
-        winnerMessage += `Winner is ${player2Name} with a score of ${score2}`;
-    } else {
-        winnerMessage += "It's a tie!";
-    }
 
     alert(winnerMessage);
 }
-
-startButton.addEventListener("click", function () {
-    // Clear any existing interval to prevent multiple countdowns
-    clearInterval(timerInterval);
-
-    // Start the countdown
-    timerInterval = setInterval(updateCounter, 1000);
-});
-
-resetButton.addEventListener("click", function () {
-    // Reset the countdown timer
-    clearInterval(timerInterval);
-    remainingTime = totalTime;
-    updateCounter();
-    location.reload();
-});
-
-// Initialize the counter display
-updateCounter();
 
 function flipCard({ target: clickedCard }) {
     if (cardOne !== clickedCard && !disableDeck) {
@@ -151,7 +265,9 @@ function flipCard({ target: clickedCard }) {
 
 function matchCards(img1, img2) {
     if (img1 === img2) {
+        playerScores[playerIndex]++;
         matched++;
+        totalMatched++;
         if (matched == pairs) {
             const cards = document.querySelectorAll(".card:not(.label)");
             cards.forEach((card) => {
@@ -159,6 +275,11 @@ function matchCards(img1, img2) {
                     card.classList.add("jump");
                 }, 400);
             });
+
+            if (gameMode == "sprint") {
+                endGame();
+            }
+
             setTimeout(() => {
                 return shuffleCard();
             }, 1200);
@@ -175,6 +296,7 @@ function matchCards(img1, img2) {
             cardTwo.classList.remove("jump");
             cardOne = cardTwo = "";
             disableDeck = false;
+            nextPlayer();
         }, 1200);
         return;
     }
@@ -188,6 +310,7 @@ function matchCards(img1, img2) {
         cardTwo.classList.remove("shake", "flip");
         cardOne = cardTwo = "";
         disableDeck = false;
+        nextPlayer();
     }, 1200);
 }
 
@@ -197,8 +320,6 @@ function shuffleCard() {
     cardOne = cardTwo = "";
     let cards = document.getElementById("cards");
     cards.innerHTML = "";
-    cards.style.width = `calc(100px * ${sideLength + 1})`;
-    cards.style.height = `calc(100px * ${sideLength + 1})`;
     let arr = [];
     let arr2 = [];
     for (let i = 0; i < (sideLength * sideLength) / 2; i++) {
@@ -209,28 +330,22 @@ function shuffleCard() {
     runes.sort(() => (Math.random() > 0.5 ? 1 : -1));
     for (let row = 0; row < sideLength + 1; row++) {
         for (let col = 0; col < sideLength + 1; col++) {
+            const card = document.createElement("li");
             if (col == 0 && row == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             } else if (col == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h2>${ROW_LABELS[row - 1]}<h2>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             } else if (row == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h2>${col}<h2>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
+                card.style.height = `calc(100% / ${sideLength + 1}`;
             } else {
-                const card = document.createElement("li");
                 card.classList.add("card");
                 card.innerHTML += `
             <div class="view front-view">
@@ -245,8 +360,8 @@ function shuffleCard() {
                 card.addEventListener("click", flipCard);
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             }
+            cardGrid.appendChild(card);
         }
     }
 }
@@ -267,96 +382,28 @@ function changeBoardSize(size, id) {
 
 function startGame() {
     shuffleCard();
+    if (gameMode == "vs") {
+        playerInfo.style.display = "flex";
+        renderScoreCards();
+    }
     //hide options, show board, and start the game
+    settings.style.display = "none";
+    board.style.display = "flex";
+    startTimer();
+}
+
+function cleanGameState() {
+    playerScores.forEach((_, index) => {
+        playerScores[index] = 0;
+    });
+    playerIndex = 0;
 }
 
 function endGame() {
-    //hide board, show options
+    playerInfo.style.display = "none";
+    settings.style.display = "flex";
+    board.style.display = "none";
+    cleanGameState();
+    resetTimer();
 }
-
-shuffleCard();
 getModeSettings();
-
-button1.addEventListener("click", () => {
-    if (!button1Clicked) {
-        const name = prompt("Enter a name for Button 1:");
-        if (name !== null) {
-            player1Name = name;
-            button1.textContent = name;
-            button1Clicked = true;
-            button1.disabled = true;
-        }
-    }
-});
-
-button2.addEventListener("click", () => {
-    if (!button2Clicked) {
-        const name = prompt("Enter a name for Button 2:");
-        if (name !== null) {
-            player2Name = name;
-            button2.textContent = name;
-            button2Clicked = true;
-            button2.disabled = true;
-        }
-    }
-});
-
-document.addEventListener("click", () => {
-    clickCount++;
-    if (clickCount < 0) {
-        if (isButton1Highlighted) {
-            button1.classList.remove("highlight");
-            button2.classList.add("highlight");
-        } else {
-            button1.classList.add("highlight");
-            button2.classList.remove("highlight");
-        }
-        isButton1Highlighted = !isButton1Highlighted;
-        clickCount = 0;
-    }
-});
-
-button1.classList.add("highlight");
-
-const incrementButton1 = document.querySelector(
-    ".user-score .increment-button"
-);
-const decrementButton1 = document.querySelector(
-    ".user-score .decrement-button"
-);
-const scoreValue1 = document.querySelector(".score-value_1");
-
-const incrementButton2 = document.querySelectorAll(
-    ".user-score .increment-button"
-)[1];
-const decrementButton2 = document.querySelectorAll(
-    ".user-score .decrement-button"
-)[1];
-const scoreValue2 = document.querySelector(".score-value_2");
-
-let score1 = 0;
-let score2 = 0;
-
-incrementButton1.addEventListener("click", () => {
-    score1++;
-    scoreValue1.textContent = score1;
-});
-
-decrementButton1.addEventListener("click", () => {
-    if (score1 > 0) {
-        score1--;
-        scoreValue1.textContent = score1;
-    }
-});
-
-incrementButton2.addEventListener("click", () => {
-    score2++;
-    scoreValue2.textContent = score2;
-});
-
-decrementButton2.addEventListener("click", () => {
-    if (score2 > 0) {
-        score2--;
-        scoreValue2.textContent = score2;
-    }
-});

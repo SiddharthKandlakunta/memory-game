@@ -9,6 +9,7 @@
 }
 
 body {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,29 +22,67 @@ body {
     background-repeat: no-repeat;
 }
 
-.wrapper {
+main {
+    width: 80%;
+    max-width: 768px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-board {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.game-board .player-info {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-board .player-info .player-scores {
+    list-style: none;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-board .player-info .player-scores .score-card {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px #00000040;
+    margin: 5px;
+}
+
+.game-board .card-wrapper {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center the content vertically */
     justify-content: center;
-    /* Center the content horizontally */
     padding: 25px;
-    border-radius: 10px;
-    background: #F8F8F8;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.button {
-    padding: 10px 20px;
-    font-size: 16px;
-    width: 150px;
-    margin: 5px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
+.game-board .end-button {
+    height: 32px;
+    width: 100%;
+    background-color: #ee0000;
+    border: 1px solid #ee0000;
     border-radius: 5px;
+    color: #fff;
+}
+
+.game-board .end-button:hover {
     cursor: pointer;
+    background-color: #ff2222;
 }
 
 .counter {
@@ -56,40 +95,7 @@ body {
     text-align: center;
     position: fixed;
     top: 20px;
-    /* Adjust the top position to move it to the top-right corner */
     right: 20px;
-    /* Set right position to align with the top-right corner */
-}
-
-#startButton {
-    font-size: 24px;
-    background-color: #4CAF50;
-    color: #fff;
-    padding: 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#startButton:hover {
-    background-color: #45a049;
-}
-
-#resetButton {
-    font-size: 24px;
-    background-color: #f44336;
-    color: #fff;
-    padding: 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 20px;
-    width: auto;
-    /* Set width to auto to match the width of the Start button */
-}
-
-#resetButton:hover {
-    background-color: #d32f2f;
 }
 
 .cards,
@@ -103,10 +109,19 @@ body {
 .cards {
     flex-wrap: wrap;
     justify-content: space-between;
+    width: 100%;
 }
 
 .cards .card {
+    aspect-ratio: 1 / 1;
     margin: 5px;
+    border: 1px solid #00000040;
+    border-radius: 5px;
+}
+
+.cards .card.label {
+    background-color: #00000040;
+    border-radius: 5px;
 }
 
 .cards .card:not(.label) {
@@ -187,67 +202,34 @@ body {
     transform: rotateY(180deg);
 }
 
-.scores {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 16px;
-    color: #333;
+.selected {
+    border: 2px solid black;
 }
 
-.scores div {
+.game-settings {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+    max-width: 768px;
+}
+
+.game-settings * {
     margin-bottom: 10px;
 }
 
-.highlight {
-    background-color: #ff5733;
-    /* Change this to your desired highlighted button color */
+.game-settings .start-btn {
+    height: 32px;
+    width: 100%;
+    background-color: #45a049;
+    border: 1px solid #45a049;
+    border-radius: 5px;
+    color: #fff;
 }
 
-.scores {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    /* Adjust right to align with the top-right corner */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    /* Align scores to the right */
-    font-size: 16px;
-    color: #333;
-}
-
-.user-score {
-    display: flex;
-    align-items: center;
-    margin: 10px;
-}
-
-.decrement-button,
-.increment-button {
-    font-size: 18px;
-    padding: 5px 10px;
+.game-settings .start-btn:hover {
+    background-color: #67c26b;
+    color: #fff;
     cursor: pointer;
-}
-
-.score-value_1 {
-    font-size: 24px;
-    background-color: #ff5733;
-    ;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 0 10px;
-}
-
-.score-value_2 {
-    font-size: 24px;
-    background-color: lightblue;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 0 10px;
 }
 
 .mode-section {
@@ -266,8 +248,9 @@ body {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-    width: 150px;
-    height: 150px;
+    width: calc(100% / 4 - 10px);
+    min-width: 130px;
+    aspect-ratio: 1;
     margin: 5px;
     display: flex;
     flex-flow: column nowrap;
@@ -285,10 +268,6 @@ body {
     background-color: #00000010;
 }
 
-.mode-section .mode-choice.selected {
-    border: 2px solid black
-}
-
 .game-options {
     background-color: #fff;
     padding: 10px;
@@ -304,18 +283,17 @@ body {
     display: flex;
     flex-flow: row wrap;
     width: 100%;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
 }
 
 .game-options .board-size-container .board-size-option {
     display: flex;
     flex-flow: row wrap;
-    width: calc(100% / 4 - 10px);
+    width: calc(100% / 3 - 10px);
     min-width: 75px;
     justify-content: center;
     align-items: center;
-    aspect-ratio: 1;
     background-color: #fff;
     padding: 10px;
     border-radius: 10px;
@@ -328,10 +306,6 @@ body {
     background-color: #00000010;
 }
 
-.game-options .board-size-container .board-size-option.selected {
-    border: 2px solid black
-}
-
 .mode-options {
     background-color: #fff;
     padding: 10px;
@@ -341,4 +315,98 @@ body {
     justify-content: space-around;
     align-items: center;
     margin-bottom: 10px;
+}
+
+.mode-options .player-list {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.mode-options .player-list .player-name {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    box-shadow: inset 1px 1px 1px #00000040;
+    font-size: 12px;
+    height: 32px;
+    padding: 10px;
+    border-radius: 5px;
+    border: solid 1px #00000040;
+}
+
+.mode-options .player-list .add-player-btn {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #00000040;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 5px;
+    color: #45b6fe;
+    border: 1px solid #45b6fe
+}
+
+.mode-options .player-list .remove-player-btn {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #00000040;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 5px;
+    color: red;
+    border: 1px solid red
+}
+
+.mode-options .player-list .add-player-btn:hover {
+    cursor: pointer;
+    background-color: #45b6fe;
+    color: #fff;
+}
+
+.mode-options .player-list .remove-player-btn:hover {
+    cursor: pointer;
+    background-color: red;
+    color: #fff;
+}
+
+.mode-options .time-options .minute-selector,
+.second-selector {
+    background-color: #fff;
+    border: 1px solid #00000040;
+    height: 32px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.time-options {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.time-options .time-choice {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.time-options .time-choice:hover {
+    cursor: pointer;
+    background-color: #00000010;
 }
