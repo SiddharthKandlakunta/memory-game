@@ -134,6 +134,7 @@ function getModeSettings() {
             break;
         case "countdown":
             break;
+        case "sprint":
         case "freeplay":
         default:
             modeOptions.innerHTML +=
@@ -155,14 +156,17 @@ function changeMode(mode) {
 }
 
 let players = ["Player 1", "Player 2"];
+let playerScores = [0, 0];
 
 function addPlayer() {
     players.push(`Player ${players.length + 1}`);
+    playerScores.push(0);
     getModeSettings();
 }
 
 function removePlayer() {
     players.pop();
+    playerScores.pop();
     getModeSettings();
 }
 
@@ -344,87 +348,3 @@ function endGame() {
 
 shuffleCard();
 getModeSettings();
-
-button1.addEventListener("click", () => {
-    if (!button1Clicked) {
-        const name = prompt("Enter a name for Button 1:");
-        if (name !== null) {
-            player1Name = name;
-            button1.textContent = name;
-            button1Clicked = true;
-            button1.disabled = true;
-        }
-    }
-});
-
-button2.addEventListener("click", () => {
-    if (!button2Clicked) {
-        const name = prompt("Enter a name for Button 2:");
-        if (name !== null) {
-            player2Name = name;
-            button2.textContent = name;
-            button2Clicked = true;
-            button2.disabled = true;
-        }
-    }
-});
-
-document.addEventListener("click", () => {
-    clickCount++;
-    if (clickCount < 0) {
-        if (isButton1Highlighted) {
-            button1.classList.remove("highlight");
-            button2.classList.add("highlight");
-        } else {
-            button1.classList.add("highlight");
-            button2.classList.remove("highlight");
-        }
-        isButton1Highlighted = !isButton1Highlighted;
-        clickCount = 0;
-    }
-});
-
-button1.classList.add("highlight");
-
-const incrementButton1 = document.querySelector(
-    ".user-score .increment-button"
-);
-const decrementButton1 = document.querySelector(
-    ".user-score .decrement-button"
-);
-const scoreValue1 = document.querySelector(".score-value_1");
-
-const incrementButton2 = document.querySelectorAll(
-    ".user-score .increment-button"
-)[1];
-const decrementButton2 = document.querySelectorAll(
-    ".user-score .decrement-button"
-)[1];
-const scoreValue2 = document.querySelector(".score-value_2");
-
-let score1 = 0;
-let score2 = 0;
-
-incrementButton1.addEventListener("click", () => {
-    score1++;
-    scoreValue1.textContent = score1;
-});
-
-decrementButton1.addEventListener("click", () => {
-    if (score1 > 0) {
-        score1--;
-        scoreValue1.textContent = score1;
-    }
-});
-
-incrementButton2.addEventListener("click", () => {
-    score2++;
-    scoreValue2.textContent = score2;
-});
-
-decrementButton2.addEventListener("click", () => {
-    if (score2 > 0) {
-        score2--;
-        scoreValue2.textContent = score2;
-    }
-});
