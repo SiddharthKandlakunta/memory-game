@@ -1,85 +1,73 @@
 <!DOCTYPE html>
-<!-- Coding By CodingNepal - youtube.com/codingnepal -->
 <html lang="en" dir="ltr">
 
 <head>
     <meta charset="utf-8">
     <title>MemoRunes</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/images/Rune-21.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-    <div class="game-settings">
-        <div class="mode-section">
-            <h2 style="width: 100%; text-align: center;">Game Mode</h2>
-            <div class="mode-choice selected" onclick="changeMode('freeplay')" id="freeplay">
-                <img src="images/free_icon.svg" />
-                <h3>Free Play</h3>
-            </div>
-            <div class="mode-choice" onclick="changeMode('vs')" id="vs">
-                <img src="images/vs_icon.svg" />
-                <h3>VS</h3>
-            </div>
-            <div class="mode-choice" onclick="changeMode('countdown')" id="countdown">
-                <img src="images/countdown_icon.svg" />
-                <h3>Countdown</h3>
-            </div>
-        </div>
-        <div class="mode-options" id="mode-options">
-
-        </div>
-        <div class="game-options">
-            <h2 style="width: 100%; text-align: center;">Game Options</h2>
-            <h3 style="width: 100%;">Board Size</h2>
-                <div class="board-size-container">
-                    <div class="board-size-option" onclick="changeBoardSize(2, 'two')" id="two">
-                        2
-                    </div>
-                    <div class="board-size-option selected" onclick="changeBoardSize(4, 'four')" id="four">
-                        4
-                    </div>
-                    <div class="board-size-option" onclick="changeBoardSize(6, 'six')" id="six">
-                        6
-                    </div>
-                    <div class="board-size-option" onclick="changeBoardSize(8, 'eight')" id="eight">
-                        8
-                    </div>
+    <main>
+        <div class="game-settings">
+            <div class="mode-section">
+                <h2 style="width: 100%; text-align: center;">Game Mode</h2>
+                <div class="mode-choice selected" onclick="changeMode('freeplay')" id="freeplay">
+                    <img src="images/free_icon.svg" />
+                    <h3>Free Play</h3>
                 </div>
+                <div class="mode-choice" onclick="changeMode('vs')" id="vs">
+                    <img src="images/vs_icon.svg" />
+                    <h3>VS</h3>
+                </div>
+                <div class="mode-choice" onclick="changeMode('countdown')" id="countdown">
+                    <img src="images/countdown_icon.svg" />
+                    <h3>Countdown</h3>
+                </div>
+                <div class="mode-choice" onclick="changeMode('sprint')" id="sprint">
+                    <img src="images/sprint_icon.svg" />
+                    <h3>Sprint</h3>
+                </div>
+            </div>
+            <div class="mode-options" id="mode-options">
+                <!-- Rendered in JS -->
+            </div>
+            <div class="game-options">
+                <h2 style="width: 100%; text-align: center;">Game Options</h2>
+                <h3 style="width: 100%;">Board Size</h2>
+                    <div class="board-size-container">
+                        <div class="board-size-option" onclick="changeBoardSize(2, 'two')" id="two">
+                            2
+                        </div>
+                        <div class="board-size-option selected" onclick="changeBoardSize(4, 'four')" id="four">
+                            4
+                        </div>
+                        <div class="board-size-option" onclick="changeBoardSize(6, 'six')" id="six">
+                            6
+                        </div>
+                        <div class="board-size-option" onclick="changeBoardSize(8, 'eight')" id="eight">
+                            8
+                        </div>
+                    </div>
+            </div>
+            <button class="start-btn" type="button" onclick="startGame()">Start</button>
         </div>
-    </div>
-    <div class="game-board">
-        <div class="wrapper">
+        <div class="game-board">
             <ul class="cards" id="cards">
                 <!-- Rendered in JS now, building up to allow user control over the board -->
             </ul>
         </div>
-    </div>
+    </main>
+
 
     <div class="counter">
         <span id="count">08:00</span>
-        <button id="startButton">Start</button>
-        <button id="resetButton">Reset</button>
-    </div>
-    <button id="button1" class="button">Player 1</button>
-    <button id="button2" class="button">Player 2</button>
-
-
-    <div class="user-score">
-        <button class="decrement-button">-</button>
-        <div class="score-value_1">0</div>
-        <button class="increment-button">+</button>
-    </div>
-    <div class="user-score">
-        <button class="decrement-button">-</button>
-        <div class="score-value_2">0</div>
-        <button class="increment-button">+</button>
     </div>
 
-    <div class="wrapper">
-        <ul class="cards" id="cards">
-            <!-- Rendered in JS now, building up to allow user control over the board -->
-        </ul>
+    <div class="game-over-modal">
+        Hi
     </div>
 
     <script src="script.js"></script>

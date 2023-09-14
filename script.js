@@ -5,6 +5,7 @@ let sideLength = 4;
 let pairs = (sideLength * sideLength) / 2;
 let matched = 0;
 
+const cardGrid = document.getElementById("cards");
 let cardOne, cardTwo;
 let disableDeck = false;
 
@@ -21,6 +22,18 @@ let seconds = 0;
 let remainingTime = minutes * 60 + seconds;
 let timerInterval;
 
+function setCounter() {
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
+
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+}
+
 function updateCounter() {
     if (remainingTime <= 0) {
         clearInterval(timerInterval);
@@ -28,14 +41,36 @@ function updateCounter() {
         return;
     }
 
-    const currMinutes = Math.floor(remainingTime / 60);
-    const currSeconds = remainingTime % 60;
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
 
-    const formattedMinutes = currMinutes < 10 ? `0${currMinutes}` : currMinutes;
-    const formattedSeconds = currSeconds < 10 ? `0${currSeconds}` : currSeconds;
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
 
     countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
     remainingTime--;
+}
+
+function editMinutes(min) {
+    minutes = min;
+    if (minutes < 1 && seconds < 1) {
+        seconds = 15;
+    }
+    if (minutes == 10) {
+        seconds = 0;
+    }
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
+    getModeSettings();
+}
+
+function editSeconds(sec) {
+    seconds = sec;
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
+    getModeSettings();
 }
 
 function startTimer() {
@@ -54,44 +89,37 @@ function resetTimer() {
 function renderTimerManagement() {
     let options = `
         <h3 style="width: 100%;">Timer</h3>
+        <h5 style="width: 100%;">Minutes</h5>
         <div class="time-options">
-            <select class="minute-selector" name="minutes" id="minutes" value="1" onchange="editMinutes(event)">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
-            ${" Minutes "}
-            <select class="second-selector" name="seconds" id="seconds" value="0" onchange="editSeconds(event)">
-                <option value="0">0</option>
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="45">45</option>
-            </select>
-            ${" Seconds"}
+        `;
+    for (let i = 0; i < 11; i++) {
+        options +=
+            i == minutes
+                ? `<div class="time-choice selected">${i}</div>`
+                : `<div class="time-choice" onclick="editMinutes(${i})">${i}</div>`;
+    }
+    options += `
         </div>
-    `;
+        <h5 style="width: 100%;">Seconds</h5>
+        <div class="time-options">
+        `;
+    if (minutes == 10) {
+        options += '<div class="time-choice selected">0</div>';
+    } else {
+        for (let i = 0; i <= 45; i += 15) {
+            if (minutes > 0 || i > 0) {
+                options +=
+                    i == seconds
+                        ? `<div class="time-choice selected">${i}</div>`
+                        : `<div class="time-choice" onclick="editSeconds(${i})">${i}</div>`;
+            }
+        }
+    }
+    options += `
+        </div>
+        `;
 
     return options;
-}
-
-function editMinutes(e) {
-    minutes = e.target.value;
-    remainingTime = minutes * 60 + seconds;
-    updateCounter();
-}
-
-function editSeconds(e) {
-    seconds = e.target.value;
-    remainingTime = minutes * 60 + seconds;
-    updateCounter();
 }
 
 let gameMode = "freeplay";
@@ -108,6 +136,8 @@ function getModeSettings() {
             break;
         case "freeplay":
         default:
+            modeOptions.innerHTML +=
+                '<p style="width: 100%; text-align: center;">No options for this mode.</p>';
     }
 }
 
@@ -243,8 +273,6 @@ function shuffleCard() {
     cardOne = cardTwo = "";
     let cards = document.getElementById("cards");
     cards.innerHTML = "";
-    cards.style.width = `calc(100px * ${sideLength + 1})`;
-    cards.style.height = `calc(100px * ${sideLength + 1})`;
     let arr = [];
     let arr2 = [];
     for (let i = 0; i < (sideLength * sideLength) / 2; i++) {
@@ -255,28 +283,22 @@ function shuffleCard() {
     runes.sort(() => (Math.random() > 0.5 ? 1 : -1));
     for (let row = 0; row < sideLength + 1; row++) {
         for (let col = 0; col < sideLength + 1; col++) {
+            const card = document.createElement("li");
             if (col == 0 && row == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             } else if (col == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h2>${ROW_LABELS[row - 1]}<h2>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             } else if (row == 0) {
-                const card = document.createElement("li");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h2>${col}<h2>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
+                card.style.height = `calc(100% / ${sideLength + 1}`;
             } else {
-                const card = document.createElement("li");
                 card.classList.add("card");
                 card.innerHTML += `
             <div class="view front-view">
@@ -291,8 +313,8 @@ function shuffleCard() {
                 card.addEventListener("click", flipCard);
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
-                document.getElementById("cards").appendChild(card);
             }
+            cardGrid.appendChild(card);
         }
     }
 }
