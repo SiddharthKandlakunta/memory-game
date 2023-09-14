@@ -1,23 +1,21 @@
 const NUM_CARD_IMAGES = 25;
 const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
+const settings = document.getElementById("game-settings");
+const board = document.getElementById("game-board");
+
 let sideLength = 4;
 let pairs = (sideLength * sideLength) / 2;
+let totalMatched = 0;
 let matched = 0;
 
 const cardGrid = document.getElementById("cards");
 let cardOne, cardTwo;
 let disableDeck = false;
 
-const button1 = document.getElementById("button1");
-const button2 = document.getElementById("button2");
-let isButton1Highlighted = true;
-let clickCount = 0;
-let button1Clicked = false;
-let button2Clicked = false;
-
+const counter = document.getElementById("counter");
 const countElement = document.getElementById("count");
-let minutes = 1;
+let minutes = 0;
 let seconds = 0;
 let remainingTime = minutes * 60 + seconds;
 let timerInterval;
@@ -34,10 +32,10 @@ function setCounter() {
     countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
 }
 
-function updateCounter() {
-    if (remainingTime <= 0) {
+function countDown() {
+    if ((gameMode == "countdown" || gameMode == "vs") && remainingTime <= 0) {
         clearInterval(timerInterval);
-        displayGameOverPopup();
+        endGame();
         return;
     }
 
@@ -51,6 +49,19 @@ function updateCounter() {
 
     countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
     remainingTime--;
+}
+
+function countUp() {
+    remainingTime++;
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    const remainingSeconds = remainingTime % 60;
+
+    const formattedMinutes =
+        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+    const formattedSeconds =
+        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
 }
 
 function editMinutes(min) {
@@ -74,16 +85,19 @@ function editSeconds(sec) {
 }
 
 function startTimer() {
-    // Clear any existing interval to prevent multiple countdowns
+    counter.style.display = "block";
     clearInterval(timerInterval);
-    // Start the countdown
-    timerInterval = setInterval(updateCounter, 1000);
+    timerInterval = setInterval(
+        gameMode == "sprint" || gameMode == "freeplay" ? countUp : countDown,
+        1000
+    );
 }
 
 function resetTimer() {
-    // Reset the countdown timer
+    counter.style.display = "none";
     clearInterval(timerInterval);
-    remainingTime = totalTime;
+    remainingTime = minutes * 60 + seconds;
+    setCounter();
 }
 
 function renderTimerManagement() {
@@ -115,48 +129,20 @@ function renderTimerManagement() {
             }
         }
     }
-    options += `
-        </div>
-        `;
+    options += "</div>";
 
     return options;
 }
 
-let gameMode = "freeplay";
-
-function getModeSettings() {
-    const modeOptions = document.getElementById("mode-options");
-    modeOptions.innerHTML =
-        '<h2 style="width: 100%; text-align: center;">Mode Options</h2>';
-    switch (gameMode) {
-        case "vs":
-            modeOptions.innerHTML += vsOptions();
-            break;
-        case "countdown":
-            break;
-        case "sprint":
-        case "freeplay":
-        default:
-            modeOptions.innerHTML +=
-                '<p style="width: 100%; text-align: center;">No options for this mode.</p>';
-    }
-}
-
-function changeMode(mode) {
-    const selected = document.querySelector(
-        ".mode-section .mode-choice.selected"
-    );
-    selected.classList.remove("selected");
-    const newSelected = document.querySelector(
-        ".mode-section .mode-choice#" + mode
-    );
-    newSelected.classList.add("selected");
-    gameMode = mode;
-    getModeSettings();
-}
-
+const playerInfo = document.getElementById("player-info");
+let playerIndex = 0;
 let players = ["Player 1", "Player 2"];
 let playerScores = [0, 0];
+
+function nextPlayer() {
+    playerIndex = (playerIndex + 1) % players.length;
+    renderScoreCards();
+}
 
 function addPlayer() {
     players.push(`Player ${players.length + 1}`);
@@ -192,28 +178,76 @@ function renderPlayerManagement() {
     return options;
 }
 
+function renderScoreCards() {
+    const scoreContainer = document.getElementById("player-scores");
+    scoreContainer.innerHTML = "";
+    players.forEach((name, index) => {
+        const scoreCard = document.createElement("li");
+        scoreCard.innerHTML = `${name} | ${playerScores[index]}`;
+        scoreCard.classList.add("score-card");
+        if (index == playerIndex) {
+            scoreCard.classList.add("selected");
+        }
+        scoreContainer.appendChild(scoreCard);
+    });
+}
+
+let gameMode = "freeplay";
+
 function vsOptions() {
     let options = renderPlayerManagement();
     options += renderTimerManagement();
-
     return options;
+}
+
+function countdownOptions() {
+    let options = renderTimerManagement();
+    return options;
+}
+
+function getModeSettings() {
+    const modeOptions = document.getElementById("mode-options");
+    modeOptions.innerHTML =
+        '<h2 style="width: 100%; text-align: center;">Mode Options</h2>';
+    switch (gameMode) {
+        case "vs":
+            modeOptions.innerHTML += vsOptions();
+            break;
+        case "countdown":
+            modeOptions.innerHTML += countdownOptions();
+            break;
+        case "sprint":
+        case "freeplay":
+        default:
+            modeOptions.innerHTML +=
+                '<p style="width: 100%; text-align: center;">No options for this mode.</p>';
+    }
+}
+
+function changeMode(mode) {
+    const selected = document.querySelector(
+        ".mode-section .mode-choice.selected"
+    );
+    selected.classList.remove("selected");
+    const newSelected = document.querySelector(
+        ".mode-section .mode-choice#" + mode
+    );
+    newSelected.classList.add("selected");
+    gameMode = mode;
+    if (mode == "freeplay" || mode == "sprint") {
+        minutes = 0;
+        editSeconds(0);
+    } else if (remainingTime == 0) {
+        editSeconds(15);
+    }
+    getModeSettings();
 }
 
 function displayGameOverPopup() {
     let winnerMessage = "Game Over!\n";
-    if (score1 > score2) {
-        winnerMessage += `Winner is ${player1Name} with a score of ${score1}`;
-    } else if (score1 < score2) {
-        winnerMessage += `Winner is ${player2Name} with a score of ${score2}`;
-    } else {
-        winnerMessage += "It's a tie!";
-    }
 
     alert(winnerMessage);
 }
-
-// Initialize the counter display
-updateCounter();
 
 function flipCard({ target: clickedCard }) {
     if (cardOne !== clickedCard && !disableDeck) {
@@ -231,7 +265,9 @@ function flipCard({ target: clickedCard }) {
 
 function matchCards(img1, img2) {
     if (img1 === img2) {
+        playerScores[playerIndex]++;
         matched++;
+        totalMatched++;
         if (matched == pairs) {
             const cards = document.querySelectorAll(".card:not(.label)");
             cards.forEach((card) => {
@@ -239,6 +275,11 @@ function matchCards(img1, img2) {
                     card.classList.add("jump");
                 }, 400);
             });
+
+            if (gameMode == "sprint") {
+                endGame();
+            }
+
             setTimeout(() => {
                 return shuffleCard();
             }, 1200);
@@ -255,6 +296,7 @@ function matchCards(img1, img2) {
             cardTwo.classList.remove("jump");
             cardOne = cardTwo = "";
             disableDeck = false;
+            nextPlayer();
         }, 1200);
         return;
     }
@@ -268,6 +310,7 @@ function matchCards(img1, img2) {
         cardTwo.classList.remove("shake", "flip");
         cardOne = cardTwo = "";
         disableDeck = false;
+        nextPlayer();
     }, 1200);
 }
 
@@ -339,12 +382,28 @@ function changeBoardSize(size, id) {
 
 function startGame() {
     shuffleCard();
+    if (gameMode == "vs") {
+        playerInfo.style.display = "flex";
+        renderScoreCards();
+    }
     //hide options, show board, and start the game
+    settings.style.display = "none";
+    board.style.display = "flex";
+    startTimer();
+}
+
+function cleanGameState() {
+    playerScores.forEach((_, index) => {
+        playerScores[index] = 0;
+    });
+    playerIndex = 0;
 }
 
 function endGame() {
-    //hide board, show options
+    playerInfo.style.display = "none";
+    settings.style.display = "flex";
+    board.style.display = "none";
+    cleanGameState();
+    resetTimer();
 }
-
-shuffleCard();
 getModeSettings();
