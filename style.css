@@ -342,3 +342,70 @@ body {
     align-items: center;
     margin-bottom: 10px;
 }
+
+.mode-options .player-list {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.mode-options .player-list .player-name {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    box-shadow: inset 1px 1px 1px #00000040;
+    font-size: 12px;
+    height: 32px;
+    padding: 10px;
+    border-radius: 5px;
+    border: solid 1px #00000040;
+}
+
+.mode-options .player-list .add-player-btn {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #00000040;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 5px;
+    color: #45b6fe;
+    border: 1px solid #45b6fe
+}
+
+.mode-options .player-list .remove-player-btn {
+    width: 75%;
+    max-width: 500px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #00000040;
+    height: 32px;
+    font-size: 12px;
+    border-radius: 5px;
+    color: red;
+    border: 1px solid red
+}
+
+.mode-options .player-list .add-player-btn:hover {
+    cursor: pointer;
+    background-color: #45b6fe;
+    color: #fff;
+}
+
+.mode-options .player-list .remove-player-btn:hover {
+    cursor: pointer;
+    background-color: red;
+    color: #fff;
+}
+
+.mode-options .time-options .minute-selector,
+.second-selector {
+    background-color: #fff;
+    border: 1px solid #00000040;
+    height: 32px;
+    padding: 5px;
+    border-radius: 5px;
+}

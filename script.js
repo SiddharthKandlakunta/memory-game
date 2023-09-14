@@ -16,11 +16,83 @@ let button1Clicked = false;
 let button2Clicked = false;
 
 const countElement = document.getElementById("count");
-const startButton = document.getElementById("startButton");
-const resetButton = document.getElementById("resetButton");
-let totalTime = 8 * 60; // 8 minutes in seconds
-let remainingTime = totalTime;
+let minutes = 1;
+let seconds = 0;
+let remainingTime = minutes * 60 + seconds;
 let timerInterval;
+
+function updateCounter() {
+    if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+        displayGameOverPopup();
+        return;
+    }
+
+    const currMinutes = Math.floor(remainingTime / 60);
+    const currSeconds = remainingTime % 60;
+
+    const formattedMinutes = currMinutes < 10 ? `0${currMinutes}` : currMinutes;
+    const formattedSeconds = currSeconds < 10 ? `0${currSeconds}` : currSeconds;
+
+    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    remainingTime--;
+}
+
+function startTimer() {
+    // Clear any existing interval to prevent multiple countdowns
+    clearInterval(timerInterval);
+    // Start the countdown
+    timerInterval = setInterval(updateCounter, 1000);
+}
+
+function resetTimer() {
+    // Reset the countdown timer
+    clearInterval(timerInterval);
+    remainingTime = totalTime;
+}
+
+function renderTimerManagement() {
+    let options = `
+        <h3 style="width: 100%;">Timer</h3>
+        <div class="time-options">
+            <select class="minute-selector" name="minutes" id="minutes" value="1" onchange="editMinutes(event)">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            ${" Minutes "}
+            <select class="second-selector" name="seconds" id="seconds" value="0" onchange="editSeconds(event)">
+                <option value="0">0</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+            </select>
+            ${" Seconds"}
+        </div>
+    `;
+
+    return options;
+}
+
+function editMinutes(e) {
+    minutes = e.target.value;
+    remainingTime = minutes * 60 + seconds;
+    updateCounter();
+}
+
+function editSeconds(e) {
+    seconds = e.target.value;
+    remainingTime = minutes * 60 + seconds;
+    updateCounter();
+}
 
 let gameMode = "freeplay";
 
@@ -68,39 +140,29 @@ function editPlayer(e, index) {
     players[index] = e.target.value;
 }
 
-function vsOptions() {
+function renderPlayerManagement() {
+    //Player Options
     let options = '<h3 style="width: 100%;">Players</h3>';
     options += '<div class="player-list">';
     players.forEach((player, index) => {
         options += `<input class="player-name" type="text" id="Player-${index}" name="player-${index}" value="${player}" onchange="editPlayer(event, ${index})"/>`;
     });
     options +=
-        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>' +
-        '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
+        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>';
+    if (players.length > 2) {
+        options +=
+            '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
+    }
     options += "</div>";
 
     return options;
 }
 
-function logPlayers() {
-    console.log(players);
-}
+function vsOptions() {
+    let options = renderPlayerManagement();
+    options += renderTimerManagement();
 
-function updateCounter() {
-    if (remainingTime <= 0) {
-        clearInterval(timerInterval);
-        displayGameOverPopup();
-        return;
-    }
-
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
-    remainingTime--;
+    return options;
 }
 
 function displayGameOverPopup() {
@@ -115,22 +177,6 @@ function displayGameOverPopup() {
 
     alert(winnerMessage);
 }
-
-startButton.addEventListener("click", function () {
-    // Clear any existing interval to prevent multiple countdowns
-    clearInterval(timerInterval);
-
-    // Start the countdown
-    timerInterval = setInterval(updateCounter, 1000);
-});
-
-resetButton.addEventListener("click", function () {
-    // Reset the countdown timer
-    clearInterval(timerInterval);
-    remainingTime = totalTime;
-    updateCounter();
-    location.reload();
-});
 
 // Initialize the counter display
 updateCounter();
