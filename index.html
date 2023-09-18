@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>MemoRunes</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/images/Rune-21.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <h1>MemoRunes</h1>
+    <main>
+        <div class="game-settings" id="game-settings">
+            <div class="mode-section">
+                <h2 style="width: 100%; text-align: center;">Game Mode</h2>
+                <div class="mode-choices">
+                    <div class="mode-choice selected" onclick="changeMode('freeplay')" id="freeplay">
+                        <img src="images/free_icon.svg" />
+                        <h3>Free Play</h3>
+                    </div>
+                    <div class="mode-choice" onclick="changeMode('vs')" id="vs">
+                        <img src="images/vs_icon.svg" />
+                        <h3>VS</h3>
+                    </div>
+                    <div class="mode-choice" onclick="changeMode('countdown')" id="countdown">
+                        <img src="images/countdown_icon.svg" />
+                        <h3>Countdown</h3>
+                    </div>
+                    <div class="mode-choice" onclick="changeMode('sprint')" id="sprint">
+                        <img src="images/sprint_icon.svg" />
+                        <h3>Sprint</h3>
+                    </div>
+                </div>
+                <div class="mode-description" id="mode-description">
+                    <img class="info-icon" width="128" height="128" src="https://img.icons8.com/pastel-glyph/128/info--v1.png" alt="info--v1" />
+                    <div id="desc-text">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="mode-options" id="mode-options">
+                <!-- Rendered in JS -->
+            </div>
+            <div class="game-options">
+                <h2 style="width: 100%; text-align: center;">Game Options</h2>
+                <h3 style="width: 100%;">Board Size</h2>
+                    <div class="board-size-container">
+                        <div class="board-size-option selected" onclick="changeBoardSize(4, 'four')" id="four">
+                            4
+                        </div>
+                        <div class="board-size-option" onclick="changeBoardSize(6, 'six')" id="six">
+                            6
+                        </div>
+                        <div class="board-size-option" onclick="changeBoardSize(8, 'eight')" id="eight">
+                            8
+                        </div>
+                    </div>
+            </div>
+            <button class="start-btn" type="button" onclick="startGame()">Start</button>
+        </div>
+        <div class="game-board" id="game-board" style="display: none;">
+            <div class="player-info" id="player-info" style="display: none;">
+                <ul class="player-scores" id="player-scores">
+                    <!-- Player score cards will be rendered by JS -->
+                </ul>
+                <h2 class="current-player" id="current-player">
+                    <!-- Current player will be rendered by JS -->
+                </h2>
+            </div>
+            <div class="card-wrapper">
+                <ul class="cards" id="cards">
+                    <!-- Rendered in JS now, building up to allow user control over the board -->
+                </ul>
+            </div>
+            <button class="end-button" onclick="renderGameOverModal()">End Game</button>
+        </div>
+    </main>
+
+
+    <div class="counter" id="counter" style="display: none;">
+        <span id="count">00:00</span>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+<div class="game-over-modal" id="game-over-modal" style="display: none;">
+    <div class="game-over-modal-card">
+        <h2>Game Over</h2>
+        <div id="game-over-text">
+            <!-- Rendered by JS -->
+        </div>
+        <button class="game-over-button" onclick="endGame()">Go Home</button>
+    </div>
+</div>
+
+</html>
