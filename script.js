@@ -142,6 +142,7 @@ let playerScores = [0, 0];
 function nextPlayer() {
     playerIndex = (playerIndex + 1) % players.length;
     renderScoreCards();
+    renderCurrentPlayer();
 }
 
 function addPlayer() {
@@ -190,6 +191,11 @@ function renderScoreCards() {
         }
         scoreContainer.appendChild(scoreCard);
     });
+}
+
+function renderCurrentPlayer() {
+    const currPlayer = document.getElementById("current-player");
+    currPlayer.innerHTML = `${players[playerIndex]}'s turn!`;
 }
 
 let gameMode = "freeplay";
@@ -337,12 +343,12 @@ function shuffleCard() {
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
             } else if (col == 0) {
                 card.classList.add("card", "label");
-                card.innerHTML = `<h2>${ROW_LABELS[row - 1]}<h2>`;
+                card.innerHTML = `<h3>${ROW_LABELS[row - 1]}<h3>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
             } else if (row == 0) {
                 card.classList.add("card", "label");
-                card.innerHTML = `<h2>${col}<h2>`;
+                card.innerHTML = `<h3>${col}<h3>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1}`;
             } else {
@@ -385,6 +391,7 @@ function startGame() {
     if (gameMode == "vs") {
         playerInfo.style.display = "flex";
         renderScoreCards();
+        renderCurrentPlayer();
     }
     //hide options, show board, and start the game
     settings.style.display = "none";
