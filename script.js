@@ -41,36 +41,30 @@ function setCounter() {
     countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
 }
 
+function getFormattedRemainingMinutes() {
+    const remainingMinutes = Math.floor(remainingTime / 60);
+    return remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+}
+
+function getFormattedRemainingSeconds() {
+    const remainingSeconds = remainingTime % 60;
+    return remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+}
+
 function countDown() {
     if ((gameMode == "countdown" || gameMode == "vs") && remainingTime <= 0) {
         clearInterval(timerInterval);
-        endGame();
+        renderGameOverModal();
         return;
     }
 
-    const remainingMinutes = Math.floor(remainingTime / 60);
-    const remainingSeconds = remainingTime % 60;
-
-    const formattedMinutes =
-        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
-    const formattedSeconds =
-        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-
-    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    countElement.textContent = `${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}`;
     remainingTime--;
 }
 
 function countUp() {
+    countElement.textContent = `${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}`;
     remainingTime++;
-    const remainingMinutes = Math.floor(remainingTime / 60);
-    const remainingSeconds = remainingTime % 60;
-
-    const formattedMinutes =
-        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
-    const formattedSeconds =
-        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-
-    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
 }
 
 function editMinutes(min) {
@@ -313,7 +307,7 @@ function matchCards(img1, img2) {
             });
 
             if (gameMode == "sprint") {
-                endGame();
+                renderGameOverModal();
             }
 
             setTimeout(() => {
@@ -436,7 +430,62 @@ function cleanGameState() {
     playerIndex = 0;
 }
 
+function generateVSGOText() {
+    let highScore = 0;
+    let winners = [];
+    playerScores.forEach((value) => {
+        highScore = highScore < value ? value : highScore;
+    });
+    playerScores.forEach((value, index) => {
+        if (value == highScore) {
+            winners.push(players[index]);
+        }
+    });
+
+    let text = "";
+
+    if (winners.length > 1) {
+        text += `It was a tie between ${winners.length} players with a score of ${highScore}!`;
+        text += "<ul>";
+        winners.forEach((name) => {
+            text += `<li>${name}</li>`;
+        });
+        text += "<ul>";
+    } else {
+        text += `${winners[0]} won with a score of ${highScore}!`;
+    }
+
+    return text;
+}
+
+function renderGameOverModal() {
+    const modal = document.getElementById("game-over-modal");
+    const modalText = document.getElementById("game-over-text");
+    switch (gameMode) {
+        case "vs":
+            modalText.innerHTML = generateVSGOText();
+            break;
+        case "countdown":
+            modalText.innerHTML = `You matched ${totalMatched} pairs in ${
+                minutes < 10 ? `0${minutes}` : minutes
+            }:${seconds < 10 ? `0${seconds}` : seconds}!`;
+            break;
+        case "sprint":
+            modalText.innerHTML = `You cleared the ${sideLength}x${sideLength} board in ${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}!`;
+            break;
+        case "freeplay":
+            modalText.innerHTML = `You played for ${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}. You got ${totalMatched} matches.`;
+            break;
+        default:
+            modalText.innerHTML = "Error game over message.";
+    }
+
+    modal.style.display = "flex";
+}
+
 function endGame() {
+    const modal = document.getElementById("game-over-modal");
+    modal.style.display = "none";
     playerInfo.style.display = "none";
     settings.style.display = "flex";
     board.style.display = "none";

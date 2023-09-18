@@ -74,7 +74,7 @@
                     <!-- Rendered in JS now, building up to allow user control over the board -->
                 </ul>
             </div>
-            <button class="end-button" onclick="endGame()">End Game</button>
+            <button class="end-button" onclick="renderGameOverModal()">End Game</button>
         </div>
     </main>
 
@@ -83,12 +83,18 @@
         <span id="count">00:00</span>
     </div>
 
-    <div class="game-over-modal" style="display: none;">
-        Hi
-    </div>
-
     <script src="script.js"></script>
 
 </body>
+
+<div class="game-over-modal" id="game-over-modal" style="display: none;">
+    <div class="game-over-modal-card">
+        <h2>Game Over</h2>
+        <div id="game-over-text">
+            <!-- Rendered by JS -->
+        </div>
+        <button class="game-over-button" onclick="endGame()">Go Home</button>
+    </div>
+</div>
 
 </html>
