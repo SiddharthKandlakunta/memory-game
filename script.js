@@ -428,6 +428,7 @@ function cleanGameState() {
         playerScores[index] = 0;
     });
     playerIndex = 0;
+    totalMatched = 0;
 }
 
 function generateVSGOText() {
