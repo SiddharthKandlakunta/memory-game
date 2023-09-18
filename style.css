@@ -469,7 +469,7 @@ main {
 }
 
 .game-over-modal-card ul,
-li {
+.game-over-modal-card li {
     list-style: none;
     width: 100%;
     text-align: center;
