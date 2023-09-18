@@ -113,7 +113,7 @@ function renderTimerManagement() {
         options +=
             i == minutes
                 ? `<div class="time-choice selected">${i}</div>`
-                : `<div class="time-choice" onclick="editMinutes(${i})">${i}</div>`;
+                : `<button class="time-choice" onclick="editMinutes(${i})">${i}</button>`;
     }
     options += `
         </div>
@@ -128,7 +128,7 @@ function renderTimerManagement() {
                 options +=
                     i == seconds
                         ? `<div class="time-choice selected">${i}</div>`
-                        : `<div class="time-choice" onclick="editSeconds(${i})">${i}</div>`;
+                        : `<button class="time-choice" onclick="editSeconds(${i})">${i}</button>`;
             }
         }
     }
@@ -360,22 +360,26 @@ function shuffleCard() {
     runes.sort(() => (Math.random() > 0.5 ? 1 : -1));
     for (let row = 0; row < sideLength + 1; row++) {
         for (let col = 0; col < sideLength + 1; col++) {
-            const card = document.createElement("li");
+            let card = "";
             if (col == 0 && row == 0) {
+                card = document.createElement("div");
                 card.classList.add("card", "label");
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
             } else if (col == 0) {
+                card = document.createElement("div");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h3>${ROW_LABELS[row - 1]}<h3>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
             } else if (row == 0) {
+                card = document.createElement("div");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h3>${col}<h3>`;
                 card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
                 card.style.height = `calc(100% / ${sideLength + 1}`;
             } else {
+                card = document.createElement("button");
                 card.classList.add("card");
                 card.innerHTML += `
             <div class="view front-view">
