@@ -240,6 +240,31 @@ main {
 }
 
 .mode-section {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.mode-section .mode-description {
+    width: 100%;
+    background-color: #00000010;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.mode-section .mode-description .info-icon {
+    width: 1rem;
+    height: 1rem;
+    margin: 5px 10px 0px 0px;
+}
+
+.mode-choices {
     background-color: #fff;
     padding: 10px;
     border-radius: 10px;
@@ -250,7 +275,7 @@ main {
     margin-bottom: 10px;
 }
 
-.mode-section .mode-choice {
+.mode-choices .mode-choice {
     background-color: #fff;
     padding: 10px;
     border-radius: 10px;

@@ -1,6 +1,15 @@
 const NUM_CARD_IMAGES = 25;
 const ROW_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
+const FP_DESC =
+    "The freeplay mode allows a player to continuously play through new, randomized boards. The timer counts up to let the player know how long they have been playing. As the player completes a board, a new one is shuffled into play.";
+const VS_DESC =
+    "In VS mode, players compete head to head for a duration of time. The players will take turns selecting cards. On a match, a point is added to the player's score. A new deck will be shuffled into play when the players complete a board. The player with the most points at the end of the timer wins!";
+const CD_DESC =
+    "Countdown allows a player to race against the clock. The player's goal is to complete the board before the timer runs out.";
+const SPRINT_DESC =
+    "The sprint mode allows users to challenge themselves in a time trial. The timer counts up, so the player should try to clear one board as fast as possible!";
+
 const settings = document.getElementById("game-settings");
 const board = document.getElementById("game-board");
 
@@ -230,6 +239,26 @@ function getModeSettings() {
     }
 }
 
+function getModeDescription() {
+    const description = document.getElementById("desc-text");
+    switch (gameMode) {
+        case "vs":
+            description.innerHTML = VS_DESC;
+            break;
+        case "countdown":
+            description.innerHTML = CD_DESC;
+            break;
+        case "sprint":
+            description.innerHTML = SPRINT_DESC;
+            break;
+        case "freeplay":
+            description.innerHTML = FP_DESC;
+            break;
+        default:
+            modeOptions.innerHTML = "Error loading mode description.";
+    }
+}
+
 function changeMode(mode) {
     const selected = document.querySelector(
         ".mode-section .mode-choice.selected"
@@ -247,6 +276,7 @@ function changeMode(mode) {
         editSeconds(15);
     }
     getModeSettings();
+    getModeDescription();
 }
 
 function displayGameOverPopup() {
@@ -413,4 +443,6 @@ function endGame() {
     cleanGameState();
     resetTimer();
 }
+
+getModeDescription();
 getModeSettings();
