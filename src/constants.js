@@ -11,5 +11,15 @@ export const SPRINT_DESC =
     "The sprint mode allows users to challenge themselves in a time trial. The timer counts up, so the player should try to clear one board as fast as possible!";
 
 // Document Elements
-const settings = document.getElementById("game-settings");
-const board = document.getElementById("game-board");
+export const settings = document.getElementById("game-settings");
+export const board = document.getElementById("game-board");
+export const cardGrid = document.getElementById("cards");
+export const modeOptions = document.getElementById("mode-options");
+export const description = document.getElementById("desc-text");
+export const playerInfo = document.getElementById("player-info");
+export const currPlayer = document.getElementById("current-player");
+export const counter = document.getElementById("counter");
+export const countElement = document.getElementById("count");
+export const scoreContainer = document.getElementById("player-scores");
+export const modal = document.getElementById("game-over-modal");
+export const modalText = document.getElementById("game-over-text");

@@ -1,28 +1,25 @@
-export const playerInfo = document.getElementById("player-info");
-export let playerIndex = 0;
-export let players = ["Player 1", "Player 2"];
-export let playerScores = [0, 0];
-
-export function nextPlayer() {
-    playerIndex = (playerIndex + 1) % players.length;
+function nextPlayer() {
+    GAME_STATE.state.players.currIndex =
+        (GAME_STATE.state.players.currIndex + 1) %
+        GAME_STATE.state.players.names.length;
     renderScoreCards();
     renderCurrentPlayer();
 }
 
-export function addPlayer() {
-    players.push(`Player ${players.length + 1}`);
-    playerScores.push(0);
+function addPlayer() {
+    GAME_STATE.state.players.names.push(`Player ${players.length + 1}`);
+    GAME_STATE.state.players.scores.push(0);
     getModeSettings();
 }
 
-export function removePlayer() {
-    players.pop();
-    playerScores.pop();
+function removePlayer() {
+    GAME_STATE.state.players.names.pop();
+    GAME_STATE.state.players.scores.pop();
     getModeSettings();
 }
 
-export function editPlayer(e, index) {
-    players[index] = e.target.value;
+function editPlayer(e, index) {
+    GAME_STATE.state.players.names[index] = e.target.value;
 }
 
 function renderPlayerManagement() {
@@ -44,13 +41,12 @@ function renderPlayerManagement() {
 }
 
 function renderScoreCards() {
-    const scoreContainer = document.getElementById("player-scores");
     scoreContainer.innerHTML = "";
-    players.forEach((name, index) => {
+    GAME_STATE.state.players.names.forEach((name, index) => {
         const scoreCard = document.createElement("li");
-        scoreCard.innerHTML = `${name} | ${playerScores[index]}`;
+        scoreCard.innerHTML = `${name} | ${GAME_STATE.state.players.scores[index]}`;
         scoreCard.classList.add("score-card");
-        if (index == playerIndex) {
+        if (index == GAME_STATE.state.players.currIndex) {
             scoreCard.classList.add("selected");
         }
         scoreContainer.appendChild(scoreCard);
@@ -58,6 +54,7 @@ function renderScoreCards() {
 }
 
 function renderCurrentPlayer() {
-    const currPlayer = document.getElementById("current-player");
-    currPlayer.innerHTML = `${players[playerIndex]}'s turn!`;
+    currPlayer.innerHTML = `${
+        GAME_STATE.state.players.names[GAME_STATE.state.players.currIndex]
+    }'s turn!`;
 }

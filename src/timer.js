@@ -1,81 +1,88 @@
-export const counter = document.getElementById("counter");
-export const countElement = document.getElementById("count");
-export let minutes = 0;
-export let seconds = 0;
-export let remainingTime = minutes * 60 + seconds;
-export let timerInterval;
-
-export function setCounter() {
-    const remainingMinutes = Math.floor(remainingTime / 60);
-    const remainingSeconds = remainingTime % 60;
-
-    const formattedMinutes =
-        remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
-    const formattedSeconds =
-        remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-
-    countElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+function setCounter() {
+    setRemainingMinutes();
+    setRemainingSeconds();
+    countElement.textContent = `${GAME_STATE.state.timer.remainingMinutes}:${GAME_STATE.state.timer.remainingSeconds}`;
 }
 
-export function getFormattedRemainingMinutes() {
-    const remainingMinutes = Math.floor(remainingTime / 60);
-    return remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
+function setRemainingMinutes() {
+    const minutes = Math.floor(GAME_STATE.state.timer.remainingTime / 60);
+
+    GAME_STATE.state.timer.remainingMinutes =
+        minutes < 10 ? `0${minutes}` : `${minutes}`;
 }
 
-export function getFormattedRemainingSeconds() {
-    const remainingSeconds = remainingTime % 60;
-    return remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+function setRemainingSeconds() {
+    const seconds = GAME_STATE.state.timer.remainingTime % 60;
+
+    GAME_STATE.state.timer.remainingSeconds =
+        seconds < 10 ? `0${seconds}` : `${seconds}`;
 }
 
-export function countDown() {
-    if ((gameMode == "countdown" || gameMode == "vs") && remainingTime <= 0) {
-        clearInterval(timerInterval);
+function countDown() {
+    if (
+        (GAME_STATE.settings.mode == "countdown" ||
+            GAME_STATE.settings.mode == "vs") &&
+        GAME_STATE.state.timer.remainingTime <= 0
+    ) {
+        clearInterval(GAME_STATE.state.timer.interval);
         renderGameOverModal();
         return;
     }
 
-    countElement.textContent = `${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}`;
-    remainingTime--;
+    setCounter();
+    GAME_STATE.state.timer.remainingTime--;
 }
 
-export function countUp() {
-    countElement.textContent = `${getFormattedRemainingMinutes()}:${getFormattedRemainingSeconds()}`;
-    remainingTime++;
+function countUp() {
+    setCounter();
+    GAME_STATE.state.timer.remainingTime++;
 }
 
-export function editMinutes(min) {
-    minutes = min;
-    if (minutes < 1 && seconds < 1) {
-        seconds = 15;
+function editMinutes(min) {
+    GAME_STATE.settings.timer.minutes = min;
+    if (
+        GAME_STATE.settings.timer.minutes < 1 &&
+        GAME_STATE.settings.timer.seconds < 1
+    ) {
+        GAME_STATE.settings.timer.seconds = 15;
     }
-    if (minutes == 10) {
-        seconds = 0;
+    if (GAME_STATE.settings.timer.minutes == 10) {
+        GAME_STATE.settings.timer.seconds = 0;
     }
-    remainingTime = minutes * 60 + seconds;
+    GAME_STATE.state.timer.remainingTime =
+        GAME_STATE.settings.timer.minutes * 60 +
+        GAME_STATE.settings.timer.seconds;
     setCounter();
     getModeSettings();
 }
 
-export function editSeconds(sec) {
-    seconds = sec;
-    remainingTime = minutes * 60 + seconds;
+function editSeconds(sec) {
+    GAME_STATE.settings.timer.seconds = sec;
+    GAME_STATE.state.timer.remainingTime =
+        GAME_STATE.settings.timer.minutes * 60 +
+        GAME_STATE.settings.timer.seconds;
     setCounter();
     getModeSettings();
 }
 
-export function startTimer() {
+function startTimer() {
     counter.style.display = "block";
-    clearInterval(timerInterval);
-    timerInterval = setInterval(
-        gameMode == "sprint" || gameMode == "freeplay" ? countUp : countDown,
+    clearInterval(GAME_STATE.state.timer.interval);
+    GAME_STATE.state.timer.interval = setInterval(
+        GAME_STATE.settings.mode == "sprint" ||
+            GAME_STATE.settings.mode == "freeplay"
+            ? countUp
+            : countDown,
         1000
     );
 }
 
-export function resetTimer() {
+function resetTimer() {
     counter.style.display = "none";
-    clearInterval(timerInterval);
-    remainingTime = minutes * 60 + seconds;
+    clearInterval(GAME_STATE.state.timer.interval);
+    GAME_STATE.state.timer.remainingTime =
+        GAME_STATE.settings.timer.minutes * 60 +
+        GAME_STATE.settings.timer.seconds;
     setCounter();
 }
 

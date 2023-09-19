@@ -1,32 +1,28 @@
-let sideLength = 4;
-let pairs = (sideLength * sideLength) / 2;
-let totalMatched = 0;
-let matched = 0;
-
-const cardGrid = document.getElementById("cards");
-let cardOne, cardTwo;
-let disableDeck = false;
-
 function flipCard({ target: clickedCard }) {
-    if (cardOne !== clickedCard && !disableDeck) {
+    if (
+        GAME_STATE.state.cardOne !== clickedCard &&
+        !GAME_STATE.state.disableDeck
+    ) {
         clickedCard.classList.add("flip");
-        if (!cardOne) {
-            return (cardOne = clickedCard);
+        if (!GAME_STATE.state.cardOne) {
+            return (GAME_STATE.state.cardOne = clickedCard);
         }
-        cardTwo = clickedCard;
-        disableDeck = true;
-        let cardOneImg = cardOne.querySelector(".back-view img").src,
-            cardTwoImg = cardTwo.querySelector(".back-view img").src;
+        GAME_STATE.state.cardTwo = clickedCard;
+        GAME_STATE.state.disableDeck = true;
+        let cardOneImg =
+                GAME_STATE.state.cardOne.querySelector(".back-view img").src,
+            cardTwoImg =
+                GAME_STATE.state.cardTwo.querySelector(".back-view img").src;
         matchCards(cardOneImg, cardTwoImg);
     }
 }
 
 function matchCards(img1, img2) {
     if (img1 === img2) {
-        playerScores[playerIndex]++;
-        matched++;
-        totalMatched++;
-        if (matched == pairs) {
+        GAME_STATE.state.players.scores[GAME_STATE.state.players.currIndex]++;
+        GAME_STATE.state.matched++;
+        GAME_STATE.state.totalMatched++;
+        if (GAME_STATE.state.matched == GAME_STATE.settings.pairs) {
             const cards = document.querySelectorAll(".card:not(.label)");
             cards.forEach((card) => {
                 setTimeout(() => {
@@ -34,7 +30,7 @@ function matchCards(img1, img2) {
                 }, 400);
             });
 
-            if (gameMode == "sprint") {
+            if (GAME_STATE.settings.mode == "sprint") {
                 renderGameOverModal();
             }
 
@@ -42,70 +38,86 @@ function matchCards(img1, img2) {
                 return shuffleCard();
             }, 1200);
         }
-        cardOne.removeEventListener("click", flipCard);
-        cardTwo.removeEventListener("click", flipCard);
+        GAME_STATE.state.cardOne.removeEventListener("click", flipCard);
+        GAME_STATE.state.cardTwo.removeEventListener("click", flipCard);
         setTimeout(() => {
-            cardOne.classList.add("jump");
-            cardTwo.classList.add("jump");
+            GAME_STATE.state.cardOne.classList.add("jump");
+            GAME_STATE.state.cardTwo.classList.add("jump");
         }, 400);
 
         setTimeout(() => {
-            cardOne.classList.remove("jump");
-            cardTwo.classList.remove("jump");
-            cardOne = cardTwo = "";
-            disableDeck = false;
+            GAME_STATE.state.cardOne.classList.remove("jump");
+            GAME_STATE.state.cardTwo.classList.remove("jump");
+            GAME_STATE.state.cardOne = GAME_STATE.state.cardTwo = "";
+            GAME_STATE.state.disableDeck = false;
             nextPlayer();
         }, 1200);
         return;
     }
     setTimeout(() => {
-        cardOne.classList.add("shake");
-        cardTwo.classList.add("shake");
+        GAME_STATE.state.cardOne.classList.add("shake");
+        GAME_STATE.state.cardTwo.classList.add("shake");
     }, 400);
 
     setTimeout(() => {
-        cardOne.classList.remove("shake", "flip");
-        cardTwo.classList.remove("shake", "flip");
-        cardOne = cardTwo = "";
-        disableDeck = false;
+        GAME_STATE.state.cardOne.classList.remove("shake", "flip");
+        GAME_STATE.state.cardTwo.classList.remove("shake", "flip");
+        GAME_STATE.state.cardOne = GAME_STATE.state.cardTwo = "";
+        GAME_STATE.state.disableDeck = false;
         nextPlayer();
     }, 1200);
 }
 
 function shuffleCard() {
-    matched = 0;
-    disableDeck = false;
-    cardOne = cardTwo = "";
-    let cards = document.getElementById("cards");
-    cards.innerHTML = "";
+    GAME_STATE.state.matched = 0;
+    GAME_STATE.state.disableDeck = false;
+    GAME_STATE.state.cardOne = GAME_STATE.state.cardTwo = "";
+    cardGrid.innerHTML = "";
     let arr = [];
     let arr2 = [];
-    for (let i = 0; i < (sideLength * sideLength) / 2; i++) {
+    for (
+        let i = 0;
+        i <
+        (GAME_STATE.settings.sideLength * GAME_STATE.settings.sideLength) / 2;
+        i++
+    ) {
         arr.push((i % 25) + 1);
         arr2.push((i % 25) + 1);
     }
     const runes = arr.concat(arr2);
     runes.sort(() => (Math.random() > 0.5 ? 1 : -1));
-    for (let row = 0; row < sideLength + 1; row++) {
-        for (let col = 0; col < sideLength + 1; col++) {
-            let card = "";
+    for (let row = 0; row < GAME_STATE.settings.sideLength + 1; row++) {
+        for (let col = 0; col < GAME_STATE.settings.sideLength + 1; col++) {
+            let card;
             if (col == 0 && row == 0) {
                 card = document.createElement("div");
                 card.classList.add("card", "label");
-                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.width = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
+                card.style.height = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
             } else if (col == 0) {
                 card = document.createElement("div");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h3>${ROW_LABELS[row - 1]}<h3>`;
-                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.width = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
+                card.style.height = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
             } else if (row == 0) {
                 card = document.createElement("div");
                 card.classList.add("card", "label");
                 card.innerHTML = `<h3>${col}<h3>`;
-                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1}`;
+                card.style.width = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
+                card.style.height = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                }`;
             } else {
                 card = document.createElement("button");
                 card.classList.add("card");
@@ -115,13 +127,23 @@ function shuffleCard() {
             </div>
             <div class="view back-view">
                 <img src="images/Rune-${
-                    runes[(row - 1) * sideLength + (col - 1)]
-                }.svg" alt="Rune ${runes[(row - 1) * sideLength + (col - 1)]}">
+                    runes[
+                        (row - 1) * GAME_STATE.settings.sideLength + (col - 1)
+                    ]
+                }.svg" alt="Rune ${
+                    runes[
+                        (row - 1) * GAME_STATE.settings.sideLength + (col - 1)
+                    ]
+                }">
             </div>
         `;
                 card.addEventListener("click", flipCard);
-                card.style.width = `calc(100% / ${sideLength + 1} - 10px)`;
-                card.style.height = `calc(100% / ${sideLength + 1} - 10px)`;
+                card.style.width = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
+                card.style.height = `calc(100% / ${
+                    GAME_STATE.settings.sideLength + 1
+                } - 10px)`;
             }
             cardGrid.appendChild(card);
         }
@@ -137,7 +159,8 @@ function changeBoardSize(size, id) {
         ".game-options .board-size-container .board-size-option#" + id
     );
     newSelected.classList.add("selected");
-    sideLength = size;
-    pairs = (sideLength * sideLength) / 2;
+    GAME_STATE.settings.sideLength = size;
+    GAME_STATE.settings.pairs =
+        (GAME_STATE.settings.sideLength * GAME_STATE.settings.sideLength) / 2;
     shuffleCard();
 }

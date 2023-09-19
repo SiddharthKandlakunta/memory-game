@@ -1,5 +1,3 @@
-export let gameMode = "freeplay";
-
 function vsOptions() {
     let options = renderPlayerManagement();
     options += renderTimerManagement();
@@ -11,11 +9,10 @@ function countdownOptions() {
     return options;
 }
 
-export function getModeSettings() {
-    const modeOptions = document.getElementById("mode-options");
+function getModeSettings() {
     modeOptions.innerHTML =
         '<h2 style="width: 100%; text-align: center;">Mode Options</h2>';
-    switch (gameMode) {
+    switch (GAME_STATE.settings.mode) {
         case "vs":
             modeOptions.innerHTML += vsOptions();
             break;
@@ -30,9 +27,8 @@ export function getModeSettings() {
     }
 }
 
-export function getModeDescription() {
-    const description = document.getElementById("desc-text");
-    switch (gameMode) {
+function getModeDescription() {
+    switch (GAME_STATE.settings.mode) {
         case "vs":
             description.innerHTML = VS_DESC;
             break;
@@ -50,7 +46,7 @@ export function getModeDescription() {
     }
 }
 
-export function changeMode(mode) {
+function changeMode(mode) {
     const selected = document.querySelector(
         ".mode-section .mode-choice.selected"
     );
@@ -59,9 +55,9 @@ export function changeMode(mode) {
         ".mode-section .mode-choice#" + mode
     );
     newSelected.classList.add("selected");
-    gameMode = mode;
+    GAME_STATE.settings.mode = mode;
     if (mode == "freeplay" || mode == "sprint") {
-        minutes = 0;
+        GAME_STATE.settings.timer.minutes = 0;
         editSeconds(0);
     } else if (remainingTime == 0) {
         editSeconds(15);
