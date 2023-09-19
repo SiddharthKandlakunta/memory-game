@@ -1,4 +1,4 @@
-const GAME_STATE = {
+export const GAME_STATE = {
     state: {
         cardOne: undefined,
         cardTwo: undefined,
@@ -28,7 +28,7 @@ const GAME_STATE = {
     }
 };
 
-const CLEAN_STATE = {
+export const CLEAN_STATE = {
     cardOne: undefined,
     cardTwo: undefined,
     matched: 0,

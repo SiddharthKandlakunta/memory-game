@@ -1,12 +1,18 @@
+import { shuffleCard } from "./cards.js";
+import { board, modal, modalText, playerInfo, settings } from "./constants.js";
+import { GAME_STATE as gs } from "./gamestate.js";
+import { renderCurrentPlayer, renderScoreCards } from "./players.js";
+import { resetTimer, startTimer } from "./timer.js";
+
 function startGame() {
     shuffleCard();
-    if (GAME_STATE.settings.mode == "vs") {
+    if (gs.settings.mode == "vs") {
         playerInfo.style.display = "flex";
         renderScoreCards();
         renderCurrentPlayer();
     }
     //hide options, show board, and start the game
-    settinGAME_STATE.style.display = "none";
+    settings.style.display = "none";
     board.style.display = "flex";
     startTimer();
 }
@@ -14,7 +20,7 @@ function startGame() {
 function generateVSGOText() {
     let highScore = 0;
     let winners = [];
-    GAME_STATE.state.players.scores.forEach((value) => {
+    gs.state.players.scores.forEach((value) => {
         highScore = highScore < value ? value : highScore;
     });
     playerScores.forEach((value, index) => {
@@ -39,29 +45,29 @@ function generateVSGOText() {
     return text;
 }
 
-function renderGameOverModal() {
-    switch (GAME_STATE.settings.mode) {
+export function renderGameOverModal() {
+    switch (gs.settings.mode) {
         case "vs":
             modalText.innerHTML = generateVSGOText();
             break;
         case "countdown":
             modalText.innerHTML = `You matched ${
-                GAME_STATE.state.totalMatched
+                gs.state.totalMatched
             } pairs in ${
-                GAME_STATE.settings.timer.minutes < 10
-                    ? `0${GAME_STATE.settings.timer.minutes}`
-                    : GAME_STATE.settings.timer.minutes
+                gs.settings.timer.minutes < 10
+                    ? `0${gs.settings.timer.minutes}`
+                    : gs.settings.timer.minutes
             }:${
-                GAME_STATE.settings.timer.seconds < 10
-                    ? `0${GAME_STATE.settings.timer.seconds}`
-                    : GAME_STATE.settings.timer.seconds
+                gs.settings.timer.seconds < 10
+                    ? `0${gs.settings.timer.seconds}`
+                    : gs.settings.timer.seconds
             }!`;
             break;
         case "sprint":
-            modalText.innerHTML = `You cleared the ${GAME_STATE.settings.sideLength}x${GAME_STATE.settings.sideLength} board in ${GAME_STATE.state.timer.remainingMinutes}:${GAME_STATE.state.timer.remainingSeconds}!`;
+            modalText.innerHTML = `You cleared the ${gs.settings.sideLength}x${gs.settings.sideLength} board in ${gs.state.timer.remainingMinutes}:${gs.state.timer.remainingSeconds}!`;
             break;
         case "freeplay":
-            modalText.innerHTML = `You played for ${GAME_STATE.state.timer.remainingMinutes}:${GAME_STATE.state.timer.remainingSeconds}. You got ${GAME_STATE.state.totalMatched} matches.`;
+            modalText.innerHTML = `You played for ${gs.state.timer.remainingMinutes}:${gs.state.timer.remainingSeconds}. You got ${gs.state.totalMatched} matches.`;
             break;
         default:
             modalText.innerHTML = "Error game over message.";
@@ -71,24 +77,21 @@ function renderGameOverModal() {
 }
 
 function cleanGameState() {
-    const players = GAME_STATE.state.players.names;
-    GAME_STATE.state = CLEAN_STATE;
-    GAME_STATE.state.players.names = players;
+    const players = gs.state.players.names;
+    gs.state = CLEAN_STATE;
+    gs.state.players.names = players;
     const scores = players.map(() => {
         return 0;
     });
-    GAME_STATE.state.players.scores = scores;
+    gs.state.players.scores = scores;
 }
 
 function endGame() {
     const modal = document.getElementById("game-over-modal");
     modal.style.display = "none";
     playerInfo.style.display = "none";
-    settinGAME_STATE.style.display = "flex";
+    settings.style.display = "flex";
     board.style.display = "none";
     cleanGameState();
     resetTimer();
 }
-
-getModeDescription();
-getModeSettings();

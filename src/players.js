@@ -1,60 +1,66 @@
-function nextPlayer() {
-    GAME_STATE.state.players.currIndex =
-        (GAME_STATE.state.players.currIndex + 1) %
-        GAME_STATE.state.players.names.length;
+import { currPlayer, scoreContainer } from "./constants.js";
+import { GAME_STATE as gs } from "./gamestate.js";
+import { getModeSettings } from "./mode.js";
+
+export function nextPlayer() {
+    gs.state.players.currIndex =
+        (gs.state.players.currIndex + 1) % gs.state.players.names.length;
     renderScoreCards();
     renderCurrentPlayer();
 }
 
-function addPlayer() {
-    GAME_STATE.state.players.names.push(`Player ${players.length + 1}`);
-    GAME_STATE.state.players.scores.push(0);
+export function addPlayer() {
+    gs.state.players.names.push(`Player ${players.length + 1}`);
+    gs.state.players.scores.push(0);
     getModeSettings();
 }
 
-function removePlayer() {
-    GAME_STATE.state.players.names.pop();
-    GAME_STATE.state.players.scores.pop();
+export function removePlayer() {
+    gs.state.players.names.pop();
+    gs.state.players.scores.pop();
     getModeSettings();
 }
 
-function editPlayer(e, index) {
-    GAME_STATE.state.players.names[index] = e.target.value;
+export function editPlayer({ target }) {
+    gs.state.players.names[target.id.split("-")[1]] = target.value;
 }
 
-function renderPlayerManagement() {
+export function renderPlayerManagement() {
     //Player Options
     let options = '<h3 style="width: 100%;">Players</h3>';
     options += '<div class="player-list">';
-    players.forEach((player, index) => {
+    gs.state.players.names.forEach((player, index) => {
         options += `<input class="player-name" type="text" id="Player-${index}" name="player-${index}" value="${player}" onchange="editPlayer(event, ${index})"/>`;
     });
     options +=
-        '<button class="add-player-btn" type="button" onclick="addPlayer()">+ Add Player</button>';
-    if (players.length > 2) {
+        '<button class="add-player-btn" id="add-player-button" type="button">+ Add Player</button>';
+    if (gs.state.players.names.length > 2) {
         options +=
-            '<button class="remove-player-btn" type="button" onclick="removePlayer()">- Remove Player</button>';
+            '<button class="remove-player-btn" id="remove-player-button" type="button">- Remove Player</button>';
+    } else {
+        options +=
+            '<button class="remove-player-btn" id="remove-player-button" type="button" style="display: none;">- Remove Player</button>';
     }
     options += "</div>";
 
     return options;
 }
 
-function renderScoreCards() {
+export function renderScoreCards() {
     scoreContainer.innerHTML = "";
-    GAME_STATE.state.players.names.forEach((name, index) => {
+    gs.state.players.names.forEach((name, index) => {
         const scoreCard = document.createElement("li");
-        scoreCard.innerHTML = `${name} | ${GAME_STATE.state.players.scores[index]}`;
+        scoreCard.innerHTML = `${name} | ${gs.state.players.scores[index]}`;
         scoreCard.classList.add("score-card");
-        if (index == GAME_STATE.state.players.currIndex) {
+        if (index == gs.state.players.currIndex) {
             scoreCard.classList.add("selected");
         }
         scoreContainer.appendChild(scoreCard);
     });
 }
 
-function renderCurrentPlayer() {
+export function renderCurrentPlayer() {
     currPlayer.innerHTML = `${
-        GAME_STATE.state.players.names[GAME_STATE.state.players.currIndex]
+        gs.state.players.names[gs.state.players.currIndex]
     }'s turn!`;
 }

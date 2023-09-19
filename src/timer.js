@@ -1,92 +1,91 @@
+import { GAME_STATE as gs } from "./gamestate.js";
+import { countElement } from "./constants.js";
+import { renderGameOverModal } from "./game.js";
+import { getModeSettings } from "./mode.js";
+
 function setCounter() {
     setRemainingMinutes();
     setRemainingSeconds();
-    countElement.textContent = `${GAME_STATE.state.timer.remainingMinutes}:${GAME_STATE.state.timer.remainingSeconds}`;
+    countElement.textContent = `${gs.state.timer.remainingMinutes}:${gs.state.timer.remainingSeconds}`;
 }
 
 function setRemainingMinutes() {
-    const minutes = Math.floor(GAME_STATE.state.timer.remainingTime / 60);
+    const minutes = Math.floor(gs.state.timer.remainingTime / 60);
 
-    GAME_STATE.state.timer.remainingMinutes =
+    gs.state.timer.remainingMinutes =
         minutes < 10 ? `0${minutes}` : `${minutes}`;
 }
 
 function setRemainingSeconds() {
-    const seconds = GAME_STATE.state.timer.remainingTime % 60;
+    const seconds = gs.state.timer.remainingTime % 60;
 
-    GAME_STATE.state.timer.remainingSeconds =
+    gs.state.timer.remainingSeconds =
         seconds < 10 ? `0${seconds}` : `${seconds}`;
 }
 
 function countDown() {
     if (
-        (GAME_STATE.settings.mode == "countdown" ||
-            GAME_STATE.settings.mode == "vs") &&
-        GAME_STATE.state.timer.remainingTime <= 0
+        (gs.settings.mode == "countdown" || gs.settings.mode == "vs") &&
+        gs.state.timer.remainingTime <= 0
     ) {
-        clearInterval(GAME_STATE.state.timer.interval);
+        clearInterval(gs.state.timer.interval);
         renderGameOverModal();
         return;
     }
 
     setCounter();
-    GAME_STATE.state.timer.remainingTime--;
+    gs.state.timer.remainingTime--;
 }
 
 function countUp() {
     setCounter();
-    GAME_STATE.state.timer.remainingTime++;
+    gs.state.timer.remainingTime++;
 }
 
-function editMinutes(min) {
-    GAME_STATE.settings.timer.minutes = min;
-    if (
-        GAME_STATE.settings.timer.minutes < 1 &&
-        GAME_STATE.settings.timer.seconds < 1
-    ) {
-        GAME_STATE.settings.timer.seconds = 15;
+export function editMinutes(e, min) {
+    e.preventDefault();
+    gs.settings.timer.minutes = min;
+    if (gs.settings.timer.minutes < 1 && gs.settings.timer.seconds < 1) {
+        gs.settings.timer.seconds = 15;
     }
-    if (GAME_STATE.settings.timer.minutes == 10) {
-        GAME_STATE.settings.timer.seconds = 0;
+    if (gs.settings.timer.minutes == 10) {
+        gs.settings.timer.seconds = 0;
     }
-    GAME_STATE.state.timer.remainingTime =
-        GAME_STATE.settings.timer.minutes * 60 +
-        GAME_STATE.settings.timer.seconds;
+    gs.state.timer.remainingTime =
+        gs.settings.timer.minutes * 60 + gs.settings.timer.seconds;
     setCounter();
     getModeSettings();
 }
 
-function editSeconds(sec) {
-    GAME_STATE.settings.timer.seconds = sec;
-    GAME_STATE.state.timer.remainingTime =
-        GAME_STATE.settings.timer.minutes * 60 +
-        GAME_STATE.settings.timer.seconds;
+export function editSeconds(e, sec) {
+    e.preventDefault();
+    gs.settings.timer.seconds = sec;
+    gs.state.timer.remainingTime =
+        gs.settings.timer.minutes * 60 + gs.settings.timer.seconds;
     setCounter();
     getModeSettings();
 }
 
-function startTimer() {
+export function startTimer() {
     counter.style.display = "block";
-    clearInterval(GAME_STATE.state.timer.interval);
-    GAME_STATE.state.timer.interval = setInterval(
-        GAME_STATE.settings.mode == "sprint" ||
-            GAME_STATE.settings.mode == "freeplay"
+    clearInterval(gs.state.timer.interval);
+    gs.state.timer.interval = setInterval(
+        gs.settings.mode == "sprint" || gs.settings.mode == "freeplay"
             ? countUp
             : countDown,
         1000
     );
 }
 
-function resetTimer() {
+export function resetTimer() {
     counter.style.display = "none";
-    clearInterval(GAME_STATE.state.timer.interval);
-    GAME_STATE.state.timer.remainingTime =
-        GAME_STATE.settings.timer.minutes * 60 +
-        GAME_STATE.settings.timer.seconds;
+    clearInterval(gs.state.timer.interval);
+    gs.state.timer.remainingTime =
+        gs.settings.timer.minutes * 60 + gs.settings.timer.seconds;
     setCounter();
 }
 
-function renderTimerManagement() {
+export function renderTimerManagement() {
     let options = `
         <h3 style="width: 100%;">Timer</h3>
         <h5 style="width: 100%;">Minutes</h5>
@@ -94,24 +93,24 @@ function renderTimerManagement() {
         `;
     for (let i = 0; i < 11; i++) {
         options +=
-            i == minutes
-                ? `<div class="time-choice selected">${i}</div>`
-                : `<button class="time-choice" onclick="editMinutes(${i})">${i}</button>`;
+            i == gs.settings.timer.minutes
+                ? `<div class="time-choice minute selected" id="Min-${i}">${i}</div>`
+                : `<button class="time-choice minute" id="Min-${i}">${i}</button>`;
     }
     options += `
         </div>
         <h5 style="width: 100%;">Seconds</h5>
         <div class="time-options">
         `;
-    if (minutes == 10) {
+    if (gs.settings.timer.minutes == 10) {
         options += '<div class="time-choice selected">0</div>';
     } else {
         for (let i = 0; i <= 45; i += 15) {
-            if (minutes > 0 || i > 0) {
+            if (gs.settings.timer.minutes > 0 || i > 0) {
                 options +=
-                    i == seconds
-                        ? `<div class="time-choice selected">${i}</div>`
-                        : `<button class="time-choice" onclick="editSeconds(${i})">${i}</button>`;
+                    i == gs.settings.timer.seconds
+                        ? `<div class="time-choice second selected" id="Sec-${i}">${i}</div>`
+                        : `<button class="time-choice second" id="Sec-${i}">${i}</button>`;
             }
         }
     }

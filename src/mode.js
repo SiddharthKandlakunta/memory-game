@@ -1,3 +1,20 @@
+import { GAME_STATE as gs } from "./gamestate.js";
+import {
+    addPlayer,
+    editPlayer,
+    removePlayer,
+    renderPlayerManagement
+} from "./players.js";
+import { editMinutes, editSeconds, renderTimerManagement } from "./timer.js";
+import {
+    CD_DESC,
+    FP_DESC,
+    SPRINT_DESC,
+    VS_DESC,
+    description,
+    modeOptions
+} from "./constants.js";
+
 function vsOptions() {
     let options = renderPlayerManagement();
     options += renderTimerManagement();
@@ -9,15 +26,56 @@ function countdownOptions() {
     return options;
 }
 
-function getModeSettings() {
+export function getModeSettings() {
     modeOptions.innerHTML =
         '<h2 style="width: 100%; text-align: center;">Mode Options</h2>';
-    switch (GAME_STATE.settings.mode) {
+    switch (gs.settings.mode) {
         case "vs":
             modeOptions.innerHTML += vsOptions();
+            document
+                .getElementById("remove-player-button")
+                .addEventListener("click", removePlayer);
+            document
+                .getElementById("add-player-button")
+                .addEventListener("click", addPlayer);
+            document.querySelectorAll(".player-name").forEach((el) => {
+                el.addEventListener("change", editPlayer);
+            });
+            document
+                .querySelectorAll(".time-choice.minute:not(.selected)")
+                .forEach((el) => {
+                    el.addEventListener(
+                        "click",
+                        editMinutes(event, el.id.split("-")[1])
+                    );
+                });
+            document
+                .querySelectorAll(".time-choice.second:not(.selected)")
+                .forEach((el) => {
+                    el.addEventListener(
+                        "click",
+                        editSeconds(event, el.id.split("-")[1])
+                    );
+                });
             break;
         case "countdown":
             modeOptions.innerHTML += countdownOptions();
+            document
+                .querySelectorAll(".time-choice.minute:not(.selected)")
+                .forEach((el) => {
+                    el.addEventListener(
+                        "click",
+                        editMinutes(el.id.split("-")[1])
+                    );
+                });
+            document
+                .querySelectorAll(".time-choice.second:not(.selected)")
+                .forEach((el) => {
+                    el.addEventListener(
+                        "click",
+                        editSeconds(el.id.split("-")[1])
+                    );
+                });
             break;
         case "sprint":
         case "freeplay":
@@ -28,7 +86,7 @@ function getModeSettings() {
 }
 
 function getModeDescription() {
-    switch (GAME_STATE.settings.mode) {
+    switch (gs.settings.mode) {
         case "vs":
             description.innerHTML = VS_DESC;
             break;
@@ -55,13 +113,20 @@ function changeMode(mode) {
         ".mode-section .mode-choice#" + mode
     );
     newSelected.classList.add("selected");
-    GAME_STATE.settings.mode = mode;
+    gs.settings.mode = mode;
     if (mode == "freeplay" || mode == "sprint") {
-        GAME_STATE.settings.timer.minutes = 0;
+        gs.settings.timer.minutes = 0;
         editSeconds(0);
-    } else if (remainingTime == 0) {
+    } else if (gs.state.timer.remainingTime == 0) {
         editSeconds(15);
     }
     getModeSettings();
     getModeDescription();
 }
+
+getModeDescription();
+getModeSettings();
+
+document.querySelectorAll(".mode-choice").forEach((el) => {
+    el.addEventListener("click", changeMode(el.id));
+});
