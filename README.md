@@ -46,8 +46,8 @@ There are four different modes to choose from, they are - </div>
 ## ***Setup and Deployment Instructions***
 
 -  Clone this repository: `git clone https://github.com/SiddharthKandlakunta/memory-game.git`.
--  <div align="justify"> Go to the `memory-game` folder. </div>
--  <div align="justify"> Open `index.html` file to open the game in your preferred browser. </div>
+-  Go to the `memory-game` folder. 
+-  Open `index.html` file to open the game in your preferred browser. 
 -  <div align="justify"> You can also directly open the game at: https://8710-memory-game.pages.dev/. </div>
 
 
