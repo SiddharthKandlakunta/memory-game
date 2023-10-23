@@ -93,6 +93,7 @@ we took some reference to our base code here - `https://www.codingnepalweb.com/b
 <div align="justify"> In conclusion, the design and development of MemoRune Memory Game was a rewarding experience. The blend of technology, creative design, and thoughtful game modes resulted in a captivating and educational memory challenge. The challenges we faced during development served as valuable learning experiences, ultimately leading to the successful creation of a game that we are proud to share with the world. </div>
 
 ## ***Contributors***
+
 - [Chase Guynup](https://github.com/chasepg0821)
 - [Pedram MohajerAnsari](https://github.com/pedram-mohajer)
 - [Siddharth Kandlakunta](https://github.com/SiddharthKandlakunta)
