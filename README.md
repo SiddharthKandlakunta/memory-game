@@ -1,5 +1,6 @@
 # ***MemoRunes***
-![image](https://github.com/SiddharthKandlakunta/memory-game/assets/144715467/d62406ea-531b-49e3-bb7c-e3fb6f41fc05)
+![image](https://github.com/SiddharthKandlakunta/memory-game/assets/144715467/c372dd57-fabc-48cd-89ff-9c2606a0509f)
+
 
 
 ## ***Game Objective and Rules***
